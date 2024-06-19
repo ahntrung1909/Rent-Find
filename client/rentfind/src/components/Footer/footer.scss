@@ -1,0 +1,14 @@
+footer {
+  width: 1260px;
+  padding: 20px 30px;
+  margin: 0 auto;
+  background-color: rgb(241, 241, 241);
+  border-radius: 5px;
+  &-logo {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  a {
+    line-height: 30px;
+  }
+}
