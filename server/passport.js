@@ -1,31 +1,22 @@
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const passport = require("passport");
-require("dotenv").config();
-const models = require("./models/index.js");
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
+const models = require("./models/index");
 const User = models.User;
+require("dotenv").config();
 
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "http://localhost:3000/api/auth/google/callback",
-            passReqToCallback: true,
-        },
-        async function (request, accessToken, refreshToken, profile, done) {
-            if (profile?.id) {
-                await User.findOrCreate({
-                    where: {
-                        id: profile.id,
-                    },
-                    defaults: {
-                        full_name: profile.displayName,
-                        email: profile.emails[0]?.value,
-                    },
-                });
-            }
-        }
-    )
-);
+const opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = process.env.JWT_SECRET;
 
-// profile.id profile.displayName
+module.exports = (passport) => {
+    passport.use(
+        new JwtStrategy(opts, (jwt_payload, done) => {
+            User.findById(jwt_payload.id).then((user) => {
+                if (user) {
+                    return done(null, user);
+                }
+                return done(null, false);
+            });
+        })
+    );
+};

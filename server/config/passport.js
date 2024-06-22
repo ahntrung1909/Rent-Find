@@ -1,0 +1,23 @@
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
+
+const createAccessToken = (user) => {
+    return jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET,
+        { expiresIn: "30m" }
+    );
+};
+
+const createRefreshToken = (user) => {
+    return jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: "7d" }
+    );
+};
+
+module.exports = {
+    createAccessToken,
+    createRefreshToken,
+};

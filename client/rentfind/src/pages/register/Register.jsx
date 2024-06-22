@@ -1,5 +1,5 @@
 import React from "react";
-import { Space, ConfigProvider } from "antd";
+import { ConfigProvider, Button, message, Space } from "antd";
 import {
     LoginForm,
     ProFormCheckbox,
@@ -16,6 +16,7 @@ import {
 import { regex } from "../../utils/regex";
 import "moment/locale/vi";
 import "./register.scss";
+import axios from "axios";
 
 const iconStyles = {
     marginInlineStart: "16px",
@@ -37,19 +38,20 @@ export default function Register() {
                 subTitle="Đăng ký để sử dụng Rent Find!"
                 submitter={{ searchConfig: { submitText: "Đăng ký" } }}
                 onFinish={async (value) => {
-                    const request = await fetch(
-                        "http://localhost:3000/api/auth/sign-up",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                // 'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: JSON.stringify(value),
-                        }
-                    );
-
-                    console.log("value", value);
+                    axios
+                        .post("http://localhost:3000/api/auth/sign-up", value)
+                        .then((res) => {
+                            if (res.status === 200) {
+                                message.success("Tạo tài khoản thành công !");
+                                setTimeout(() => {
+                                    window.location.href =
+                                        "http://localhost:5173/login";
+                                }, 1500);
+                            }
+                        })
+                        .catch((err) => {
+                            message.error("Tạo tài khoản thất bại !");
+                        });
                 }}
             >
                 <ProFormText
@@ -139,7 +141,7 @@ export default function Register() {
                     <ProFormDatePicker
                         name="dob"
                         label="Nhập ngày tháng năm sinh:"
-                        placeholder={"Nhập ngày tháng năm sinh:"}
+                        placeholder={"Date of Birth"}
                         fieldProps={{
                             size: "large",
                         }}
@@ -150,17 +152,20 @@ export default function Register() {
                     />
                 </ConfigProvider>
 
-                {/* <ProFormDatePicker style={{
-          width: 328,
-        }} 
-        placeholder={"Nhập ngày tháng năm sinh:"} name="date" />  */}
-
                 <div
                     style={{
                         marginBlockEnd: 24,
                         marginBottom: 35,
                     }}
                 ></div>
+                <div
+                    style={{
+                        marginBlockEnd: 24,
+                        textAlign: "right",
+                    }}
+                >
+                    <a href="/login">Đăng nhập ?</a>
+                </div>
             </LoginForm>
         </>
     );
