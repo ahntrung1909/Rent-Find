@@ -1,34 +1,34 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('User1s', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      firstName: {
-        type: Sequelize.STRING
-      },
-      lastName: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
-  },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('User1s');
-  }
+    up: async (queryInterface, Sequelize) => {
+        await queryInterface.createTable("addresses", {
+            id: {
+                type: Sequelize.STRING,
+                allowNull: false,
+                primaryKey: true,
+            },
+            description: {
+                type: Sequelize.TEXT,
+                allowNull: false,
+            },
+            ward: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            district: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            city: {
+                type: Sequelize.STRING,
+                allowNull: true,
+            },
+            // Các trường timestamp đã được disable trong model
+        });
+    },
+
+    down: async (queryInterface, Sequelize) => {
+        await queryInterface.dropTable("addresses");
+    },
 };

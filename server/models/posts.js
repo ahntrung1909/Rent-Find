@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            // Posts.hasMany(models.ImgPost, {
+            //     foreignKey: "postId",
+            // });
+            Posts.belongsTo(models.Addresses, {
+                foreignKey: "post_address_id",
+            });
         }
     }
     Posts.init(
@@ -21,8 +27,10 @@ module.exports = (sequelize, DataTypes) => {
             price: DataTypes.FLOAT, //FLOAT
             title: DataTypes.STRING,
             status: DataTypes.STRING,
-            postAddressId: DataTypes.STRING,
-            userId: DataTypes.STRING,
+            post_address_id: {
+                type: DataTypes.STRING,
+            },
+            user_id: DataTypes.STRING,
         },
         {
             sequelize,

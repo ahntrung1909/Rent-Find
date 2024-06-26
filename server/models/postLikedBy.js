@@ -17,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 type: DataTypes.STRING,
             },
-            postId: DataTypes.STRING,
-            userId: DataTypes.STRING,
+            post_id: DataTypes.STRING,
+            user_id: DataTypes.STRING,
         },
         {
             sequelize,

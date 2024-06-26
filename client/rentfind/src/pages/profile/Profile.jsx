@@ -1,5 +1,8 @@
 import "./profile.scss";
+import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import { ArrowRightOutlined } from "@ant-design/icons";
+
 import {
     ProForm,
     ProFormText,
@@ -8,84 +11,99 @@ import {
     viVNIntl,
 } from "@ant-design/pro-components";
 import { ConfigProvider } from "antd";
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atom";
 
 import axios from "axios";
 
-const UserInfoForm = () => {
-    const [cities, setCities] = useState([]);
+export default function Profile() {
+    const [user, setUser] = useRecoilState(userState);
+    const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
+    const [selectedCity, setSelectedCity] = useState(null);
+    const [selectedDistrict, setSelectedDistrict] = useState(null);
 
     useEffect(() => {
-        // Fetch the list of cities
-        axios
-            .get("https://vapi.vnappmob.com/api/province")
-            // {
-            //     headers: {
-            //         "Access-Control-Allow-Origin": "*",
-            //         "Access-Control-Allow-Methods":
-            //             "GET, POST, PATCH, PUT, DELETE",
-            //     },
-            // }
-            .then((response) => {
-                setCities(response.data.results);
-            })
-            .catch((error) => {
-                console.error("There was an error fetching the cities!", error);
-            });
+        const fetchProvinces = async () => {
+            // const data = await getProvinces();
+
+            const response = await fetch(
+                "http://localhost:3000/api/public/vapi/province"
+            );
+            const result = await response.json();
+
+            const data = result.results;
+            // console.log(data, "");
+            setProvinces(data);
+        };
+
+        fetchProvinces();
     }, []);
 
-    const handleCityChange = (value) => {
-        // Fetch the list of districts based on selected city
-        axios
-            .get(`https://vapi.vnappmob.com/api/province/district/${value}`)
-            .then((response) => {
-                setDistricts(response.data.results);
-                setWards([]); // Clear wards when city changes
-            })
-            .catch((error) => {
-                console.error(
-                    "There was an error fetching the districts!",
-                    error
-                );
-            });
+    const handleCityChange = async (value) => {
+        setSelectedCity(value);
+        setDistricts([]);
+        setWards([]);
+        const response = await fetch(
+            `http://localhost:3000/api/public/vapi/province/district/${value}`
+        );
+        const result = await response.json();
+
+        const data = result.results;
+        setDistricts(data);
     };
 
-    const handleDistrictChange = (value) => {
-        // Fetch the list of wards based on selected district
-        axios
-            .get(`https://vapi.vnappmob.com/api/province/ward/${value}`)
-            .then((response) => {
-                setWards(response.data.results);
-            })
-            .catch((error) => {
-                console.error("There was an error fetching the wards!", error);
-            });
-    };
+    const handleDistrictChange = async (value) => {
+        setSelectedDistrict(value);
+        setWards([]);
+        const response = await fetch(
+            `http://localhost:3000/api/public/vapi/province/ward/${value}`
+        );
+        const result = await response.json();
 
+        const data = result.results;
+        setWards(data);
+    };
     return (
         <div className="container">
-            <h1
+            <div
+                className="about"
                 style={{
-                    margin: "20px 0",
+                    display: "flex",
+                    justifyContent: "space-between",
                 }}
             >
-                Thông tin người dùng
-            </h1>
+                <h1
+                    style={{
+                        margin: "20px 0",
+                    }}
+                >
+                    Thông tin người dùng
+                </h1>
+                <Link to="/">
+                    Quay về trang chủ <ArrowRightOutlined />
+                </Link>
+                {/*tý  chỉnh  */}
+            </div>
             <ProForm
                 submitter={{
                     searchConfig: {
-                        submitText: "Submit",
-                        resetText: "Cancel",
+                        submitText: "Lưu",
+                        resetText: "Hủy",
                     },
                 }}
                 onFinish={async (values) => {
                     console.log(values);
                 }}
+                onReset={() => {
+                    window.location.href = "http://localhost:5173/";
+                }}
             >
                 <ProFormText
-                    name="username"
+                    name="fullName"
                     label="Tên người dùng"
+                    value={user?.data.full_name}
                     placeholder="Nhập tên người dùng"
                     rules={[
                         {
@@ -99,6 +117,7 @@ const UserInfoForm = () => {
                     <ProFormDatePicker
                         name="dob"
                         label="Nhập ngày tháng năm sinh:"
+                        value={user?.data.dob}
                         placeholder={"Date of Birth"}
                         fieldProps={{
                             size: "large",
@@ -113,6 +132,7 @@ const UserInfoForm = () => {
                 <ProFormText
                     name="phoneNumber"
                     label="Số điện thoại"
+                    value={user?.data.phone_number}
                     placeholder="Nhập số điện thoại"
                     rules={[
                         {
@@ -130,10 +150,13 @@ const UserInfoForm = () => {
                     name="city"
                     label="Thành phố"
                     placeholder="Chọn thành phố"
-                    options={cities.map((city) => ({
-                        label: city.name,
-                        value: city.id,
-                    }))}
+                    options={
+                        provinces &&
+                        provinces.map((province) => ({
+                            label: province.province_name,
+                            value: province.province_id,
+                        }))
+                    }
                     onChange={handleCityChange}
                     rules={[
                         { required: true, message: "Vui lòng chọn thành phố" },
@@ -145,14 +168,14 @@ const UserInfoForm = () => {
                     label="Quận/Huyện"
                     placeholder="Chọn quận/huyện"
                     options={districts.map((district) => ({
-                        label: district.name,
-                        value: district.id,
+                        label: district.district_name,
+                        value: district.district_id,
                     }))}
                     onChange={handleDistrictChange}
+                    disabled={!districts.length}
                     rules={[
                         { required: true, message: "Vui lòng chọn quận/huyện" },
                     ]}
-                    disabled={!districts.length}
                 />
 
                 <ProFormSelect
@@ -160,13 +183,13 @@ const UserInfoForm = () => {
                     label="Phường/Xã"
                     placeholder="Chọn phường/xã"
                     options={wards.map((ward) => ({
-                        label: ward.name,
-                        value: ward.id,
+                        label: ward.ward_name,
+                        value: ward.ward_id,
                     }))}
+                    disabled={!wards.length}
                     rules={[
                         { required: true, message: "Vui lòng chọn phường/xã" },
                     ]}
-                    disabled={!wards.length}
                 />
 
                 <ProFormText
@@ -177,6 +200,55 @@ const UserInfoForm = () => {
             </ProForm>
         </div>
     );
-};
+}
 
-export default UserInfoForm;
+// const [cities, setCities] = useState([]);
+// const [districts, setDistricts] = useState([]);
+// const [wards, setWards] = useState([]);
+
+// useEffect(() => {
+//     // Fetch the list of cities
+//     axios
+//         .get("https://vapi.vnappmob.com/api/province")
+//         // {
+//         //     headers: {
+//         //         "Access-Control-Allow-Origin": "*",
+//         //         "Access-Control-Allow-Methods":
+//         //             "GET, POST, PATCH, PUT, DELETE",
+//         //     },
+//         // }
+//         .then((response) => {
+//             setCities(response.data.results);
+//         })
+//         .catch((error) => {
+//             console.error("There was an error fetching the cities!", error);
+//         });
+// }, []);
+
+// const handleCityChange = (value) => {
+//     // Fetch the list of districts based on selected city
+//     axios
+//         .get(`https://vapi.vnappmob.com/api/province/district/${value}`)
+//         .then((response) => {
+//             setDistricts(response.data.results);
+//             setWards([]); // Clear wards when city changes
+//         })
+//         .catch((error) => {
+//             console.error(
+//                 "There was an error fetching the districts!",
+//                 error
+//             );
+//         });
+// };
+
+// const handleDistrictChange = (value) => {
+//     // Fetch the list of wards based on selected district
+//     axios
+//         .get(`https://vapi.vnappmob.com/api/province/ward/${value}`)
+//         .then((response) => {
+//             setWards(response.data.results);
+//         })
+//         .catch((error) => {
+//             console.error("There was an error fetching the wards!", error);
+//         });
+// };

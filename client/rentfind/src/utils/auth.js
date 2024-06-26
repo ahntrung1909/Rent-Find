@@ -9,7 +9,7 @@ const getDecodedToken = () => {
     return null;
 };
 
-const logout = () => {
+const logout = async () => {
     localStorage.removeItem("accessToken");
     setAuthToken(false);
 };

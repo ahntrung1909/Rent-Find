@@ -26,10 +26,6 @@ const iconStyles = {
     cursor: "pointer",
 };
 
-function onChange(date, dateString) {
-    console.log(date, dateString);
-}
-
 export default function Register() {
     return (
         <>
@@ -86,6 +82,10 @@ export default function Register() {
                             required: true,
                             message: "Không được bỏ trống !",
                         },
+                        {
+                            min: 6,
+                            message: "Tên người dùng phải có ít nhất 6 ký tự !",
+                        },
                     ]}
                     label={"Nhập tên người dùng: "}
                 />
@@ -102,6 +102,15 @@ export default function Register() {
                             required: true,
                             message: "Không được bỏ trống !",
                         },
+                        {
+                            pattern: /^(?=.*[A-Z]).{6,}$/,
+                            message:
+                                "Mật khẩu phải chứa ít nhất một chữ in hoa !",
+                        },
+                        {
+                            min: 6,
+                            message: "Mật khẩu phải có ít nhất 6 ký tự !",
+                        },
                     ]}
                     label={"Nhập mật khẩu:"}
                 />
@@ -117,6 +126,19 @@ export default function Register() {
                             required: true,
                             message: "Không được bỏ trống !",
                         },
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (
+                                    !value ||
+                                    getFieldValue("password") === value
+                                ) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                    new Error("Mật khẩu không trùng khớp!")
+                                );
+                            },
+                        }),
                     ]}
                     label={"Nhập lại mật khẩu của bạn"}
                 />
@@ -133,6 +155,10 @@ export default function Register() {
                             required: true,
                             message: "Không được bỏ trống !",
                         },
+                        // {
+                        //     max: 11,
+                        //     message: "Mật khẩu phải có ít nhất 6 ký tự !",
+                        // },
                     ]}
                     label={"Nhập số điện thoại: "}
                 />

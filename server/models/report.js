@@ -9,6 +9,18 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            Report.hasMany(models.ImgReport, {
+                foreignKey: "reportid",
+                as: "FK_imgreport_reportid",
+            });
+            Report.belongsTo(models.User, {
+                foreignKey: "accuser",
+                as: "fK_report_user_accuser",
+            });
+            Report.belongsTo(models.User, {
+                foreignKey: "accused",
+                as: "fK_report_user_accused",
+            });
         }
     }
     Report.init(
@@ -20,12 +32,12 @@ module.exports = (sequelize, DataTypes) => {
             accuser: DataTypes.STRING,
             accused: DataTypes.STRING,
             reason: DataTypes.STRING,
-            sendAt: DataTypes.DATE,
+            send_at: DataTypes.DATE,
             status: DataTypes.BOOLEAN,
             result: DataTypes.BOOLEAN,
-            postId: DataTypes.STRING,
+            post_id: DataTypes.STRING,
             verifier: DataTypes.STRING,
-            verifyAt: DataTypes.DATE,
+            verify_at: DataTypes.DATE,
             action: DataTypes.STRING,
         },
         {

@@ -39,7 +39,9 @@ export default function Login() {
                 submitter={{ searchConfig: { submitText: "Đăng nhập" } }}
                 onFinish={async (value) => {
                     axios
-                        .post("http://localhost:3000/api/auth/login", value)
+                        .post("http://localhost:3000/api/auth/login", value, {
+                            withCredentials: true,
+                        })
                         .then((res) => {
                             if (res.status === 200) {
                                 const { success, accessToken } = res.data;

@@ -1,34 +1,47 @@
-'use strict';
+"use strict";
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('f1s', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      firstName: {
-        type: Sequelize.STRING
-      },
-      lastName: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
-  },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('f1s');
-  }
+    up: async (queryInterface, Sequelize) => {
+        await queryInterface.createTable("messages", {
+            id: {
+                type: Sequelize.STRING,
+                allowNull: false,
+                primaryKey: true,
+            },
+            sender_id: {
+                type: Sequelize.STRING,
+
+                // references: {
+                //     model: "user", // Tên bảng mà khóa ngoại tham chiếu đến
+                //     key: "id", // Khóa chính của bảng tham chiếu
+                // },
+                // onUpdate: "CASCADE",
+                // onDelete: "SET NULL",
+            },
+            receiver_id: {
+                type: Sequelize.STRING,
+
+                // references: {
+                //     model: "user", // Tên bảng mà khóa ngoại tham chiếu đến
+                //     key: "id", // Khóa chính của bảng tham chiếu
+                // },
+                // onUpdate: "CASCADE",
+                // onDelete: "SET NULL",
+            },
+            content: {
+                type: Sequelize.STRING,
+            },
+            send_at: {
+                type: Sequelize.DATE,
+            },
+            seen: {
+                type: Sequelize.BOOLEAN,
+            },
+            // Các trường timestamp đã được disable trong model
+        });
+    },
+
+    down: async (queryInterface, Sequelize) => {
+        await queryInterface.dropTable("messages");
+    },
 };

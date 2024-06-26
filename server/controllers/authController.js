@@ -38,32 +38,76 @@ const authController = {
     },
     login: async (req, res) => {
         const { email, password } = req.body;
-        User.findOne({ where: { email: email } }).then((user) => {
-            if (!user) {
-                return res
-                    .status(404)
-                    .json({ message: "Tài khoản không tồn tại! " });
-            } else {
+        User.findOne({ where: { email } })
+            .then((user) => {
+                if (!user) {
+                    return res
+                        .status(404)
+                        .json({ message: "Tài khoản không tồn tại!" });
+                }
+
                 if (user.password !== password) {
+                    // Ensure you're handling password hashing properly in a real app
                     return res.status(400).json({
                         message: "Tài khoản hoặc mật khẩu không chính xác!",
                     });
                 }
+
                 const accessToken = createAccessToken(user);
                 const refreshToken = createRefreshToken(user);
+
                 res.cookie("refreshToken", refreshToken, {
                     httpOnly: true,
-                    path: "/api/auth/refresh-token",
+                    sameSite: "strict", // Helps prevent CSRF attacks
+                    maxAge: 3 * 24 * 60 * 60 * 1000, // 1 day
                 });
+
                 return res.json({ success: true, accessToken });
+            })
+            .catch((err) => {
+                console.error(err);
+                return res
+                    .status(500)
+                    .json({ message: "Internal server error" });
+            });
+    }, //decoded accessToken ở phía be và lấy ra id
+    refreshToken: async (req, res) => {
+        try {
+            const refreshToken = req.cookies.refreshToken;
+            console.log(refreshToken);
+            if (!refreshToken) {
+                return res.status(403).json({ msg: "Authorization thất bại" });
             }
-        });
+
+            jwt.verify(
+                refreshToken,
+                process.env.JWT_REFRESH_SECRET,
+                async (err, decoded) => {
+                    if (err) {
+                        return res
+                            .status(403)
+                            .json({ msg: "Authorization thất bại" });
+                    }
+
+                    // Assuming the JWT payload contains the user ID
+                    const user = await User.findByPk(decoded.id);
+                    if (!user) {
+                        return res
+                            .status(403)
+                            .json({ msg: "Authorization thất bại" });
+                    }
+
+                    const newAccessToken = createAccessToken(user);
+                    res.json({ accessToken: newAccessToken });
+                }
+            );
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ msg: "Internal server error" });
+        }
     },
-    refreshToken: async (req, res) => {},
     changePassword: async (req, res) => {},
     logout: async (req, res) => {},
 };
 
-module.exports = {
-    authController,
-};
+module.exports = authController;

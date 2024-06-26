@@ -6,6 +6,8 @@ import HomePage from "../pages/homePage/HomePage";
 import ErrorPage from "../ErrorPage";
 import ChangePassword from "../pages/changePassword/ChangePassword";
 import Profile from "../pages/profile/Profile";
+import UploadPost from "../pages/uploadPost/UploadPost";
+import AuthGuard from "../components/AuthGuard";
 
 export const routers = createBrowserRouter([
     {
@@ -35,7 +37,19 @@ export const routers = createBrowserRouter([
             },
             {
                 path: "/profile",
-                element: <Profile />,
+                element: (
+                    <AuthGuard>
+                        <Profile />,
+                    </AuthGuard>
+                ),
+            },
+            {
+                path: "/upload-post",
+                element: (
+                    <AuthGuard>
+                        <UploadPost />,
+                    </AuthGuard>
+                ),
             },
         ],
     },

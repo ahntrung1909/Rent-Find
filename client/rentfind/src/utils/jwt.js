@@ -1,4 +1,5 @@
 import { getDecodedToken, logout } from "../utils/auth";
+import { getTokenByRefreshToken } from "../API/auth";
 import { userState } from "../recoil/atom";
 import setAuthToken from "../utils/setAuthToken";
 
@@ -10,7 +11,7 @@ const checkJwt = async () => {
         const decoded = getDecodedToken();
         const currentTime = Date.now() / 1000;
         if (decoded.exp < currentTime) {
-            let accessToken = false;
+            let accessToken = await getTokenByRefreshToken();
             if (!accessToken) {
                 logout();
                 return null;

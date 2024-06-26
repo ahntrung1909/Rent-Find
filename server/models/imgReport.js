@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
+            // ImgReport.belongsTo(models.Report, {
+            //     foreignKey: "reportId",
+            //     as: "FK_imgreport_reportid",
+            // });
         }
     }
     ImgReport.init(
@@ -18,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
             },
             imgUrl: DataTypes.STRING,
-            publicId: DataTypes.STRING,
-            reportId: DataTypes.STRING,
+            public_id: DataTypes.STRING,
+            report_id: DataTypes.STRING,
         },
         {
             sequelize,

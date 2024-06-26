@@ -1,15 +1,14 @@
 import "./header.scss";
-import { Button, Flex } from "antd";
+import { Button, Flex, message } from "antd";
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atom";
+import { logout } from "../../utils/auth";
 
 export default function Header() {
-    const [user, setUser] = useRecoilState(userState); //để tạm
-    useEffect(() => {
-        console.log(user);
-    }, []);
+    const [user, setUser] = useRecoilState(userState);
+
     return (
         <header>
             <div className="wrapper">
@@ -19,14 +18,24 @@ export default function Header() {
                     </Link>
                     <Flex align="center" gap="30px">
                         <Link to="/">Trang chủ</Link>
-                        <Link to="/post">Đăng bài</Link>
+                        <Link to="/upload-post">Đăng bài</Link>
                         <Link to="/search">Tìm kiếm</Link>
                         {user ? (
                             <Flex align="center" gap="30px">
                                 <Link to="/profile">
                                     Xin chào, {user.data.full_name}
                                 </Link>
-                                <Button size="large" href="/logout">
+                                <Button
+                                    size="large"
+                                    href="/"
+                                    onClick={async () => {
+                                        logout();
+                                        setTimeout(() => {
+                                            window.location.href =
+                                                "http://localhost:5173/login";
+                                        }, 1500);
+                                    }}
+                                >
                                     Đăng xuất
                                 </Button>
                             </Flex>

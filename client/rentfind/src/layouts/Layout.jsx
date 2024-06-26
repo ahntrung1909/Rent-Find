@@ -19,13 +19,12 @@ function ErrorBoundary({ children }) {
 
 export default function Layout() {
     const [user, setUser] = useRecoilState(userState);
-    const abc = async () => {
-        console.log("12345");
+    const haveUserProfile = async () => {
         const userId = await checkJwt();
 
         if (userId) {
             let userInfo = await getUserProfile(userId);
-            console.log("user", userInfo);
+            // console.log("userInfo", userInfo);
 
             setUser(userInfo);
         } else {
@@ -33,8 +32,7 @@ export default function Layout() {
         }
     };
     useEffect(() => {
-        abc();
-        console.log("user", user);
+        haveUserProfile();
     }, [setUser]);
     return (
         <div className="root">
