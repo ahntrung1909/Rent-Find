@@ -14,7 +14,7 @@ export default function Header() {
             <div className="wrapper">
                 <Flex justify="space-between" align="center">
                     <Link to="/" className="header-logo">
-                        RentFind
+                        <h3>RentFind</h3>
                     </Link>
                     <Flex align="center" gap="30px">
                         <Link to="/">Trang chủ</Link>

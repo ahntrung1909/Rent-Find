@@ -7,6 +7,7 @@ import {
     ProForm,
     ProFormText,
     ProFormSelect,
+    ProFormUploadButton,
 } from "@ant-design/pro-components";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atom";
@@ -152,6 +153,17 @@ export default function UploadPost() {
                             message: "Vui lòng nhập mô tả bài viết",
                         },
                     ]}
+                />
+
+                <ProFormUploadButton
+                    name="image"
+                    label="Tải ảnh lên"
+                    title="Chọn để tải lên"
+                    max={5}
+                    fieldProps={{
+                        beforeUpload: () => false, // Prevent the upload automatically
+                    }}
+                    rules={[{ required: true, message: "Hãy chọn ảnh" }]}
                 />
 
                 <ProFormText

@@ -8,6 +8,7 @@ import ChangePassword from "../pages/changePassword/ChangePassword";
 import Profile from "../pages/profile/Profile";
 import UploadPost from "../pages/uploadPost/UploadPost";
 import AuthGuard from "../components/AuthGuard";
+import PostDetails from "../pages/postDetails/PostDetails";
 
 export const routers = createBrowserRouter([
     {
@@ -50,6 +51,10 @@ export const routers = createBrowserRouter([
                         <UploadPost />,
                     </AuthGuard>
                 ),
+            },
+            {
+                path: "/post/:id",
+                element: <PostDetails></PostDetails>,
             },
         ],
     },
