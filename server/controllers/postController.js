@@ -3,6 +3,7 @@ const model = require("../models/index");
 const { v4 } = require("uuid");
 const Posts = model.Posts;
 const Addresses = model.Addresses;
+const ImgPost = model.ImgPost;
 
 const PostController = {
     uploadPost: (req, res) => {
@@ -17,7 +18,10 @@ const PostController = {
             price,
             title,
             ward,
+            image,
         } = req.body;
+
+        const uids = image.map((item) => item.uid);
 
         try {
             Addresses.create({
@@ -36,6 +40,15 @@ const PostController = {
                     title: title,
                     post_address_id: newId1,
                     user_id: currentUserId,
+                });
+            }
+
+            for (const uid of uids) {
+                ImgPost.create({
+                    id: uid,
+                    // imgUrl: `https://your-image-url/${imgUrl}`,
+                    // public_id: imgUrl,
+                    post_id: newId2,
                 });
             }
             res.status(201).json({

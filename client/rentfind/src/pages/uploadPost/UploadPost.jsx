@@ -159,7 +159,7 @@ export default function UploadPost() {
                     name="image"
                     label="Tải ảnh lên"
                     title="Chọn để tải lên"
-                    max={5}
+                    max={4}
                     fieldProps={{
                         beforeUpload: () => false, // Prevent the upload automatically
                     }}
