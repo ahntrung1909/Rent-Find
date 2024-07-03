@@ -7,6 +7,11 @@ const { authenticateJWT } = require("../middlewares/auth.middleware");
 router.get("/", function (req, res, next) {
     res.send("respond with a resource");
 });
-router.get(`/user-information/:id`, authenticateJWT, userController.getInfo);
+router.get(`/user-information/:id`, userController.getInfo);
+router.get(
+    `/update-user-information/`,
+    authenticateJWT,
+    userController.updateInfo
+);
 
 module.exports = router;

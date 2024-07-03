@@ -1,8 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { singlePostData, userData } from "../../lib/dummydata.js";
 import Slider from "../../components/Slider/slider.jsx";
 import "./postDetails.scss";
+import axios from "axios";
+
 export default function PostDetails() {
+    const [liked, setLiked] = useState(false);
+    const [postDetails, setPostDetails] = useState([]);
+    const postId = useParams().id;
+
+    const handleLiked = () => {
+        setLiked((prev) => !prev);
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            //sửa lại theo cách Trưởng, xử lý ở be
+            const response = await axios.get(
+                `http://localhost:3000/api/post/get-detail-post/${postId}`
+            );
+            const data = await response.data;
+            console.log(data);
+
+            const postAddressId = data.post_address_id;
+            const userAddressId = data.user_id;
+
+            const userResponse = await axios.get(
+                `http://localhost:3000/api/user/user-information/${userAddressId}`
+            );
+            let imgPostResponse;
+            try {
+                imgPostResponse = await axios.get(
+                    `http://localhost:3000/api/img-post/img/${postId.id}`
+                );
+            } catch (error) {
+                if (error.response && error.response.status === 404) {
+                    console.log("Image post not found, skipping...");
+                    imgPostResponse = { data: null };
+                } else {
+                    throw error;
+                }
+            }
+            const addressResponse = await axios.get(
+                `http://localhost:3000/api/addresses/address-information/${postAddressId}`
+            );
+
+            const postDetailsFull = {
+                ...data,
+                user: userResponse.data,
+                imgPost: imgPostResponse.data,
+                address: addressResponse.data,
+            };
+
+            setPostDetails(postDetailsFull);
+        };
+
+        fetchData();
+    }, []);
+    console.log(postDetails);
     return (
         <div className="container">
             <div className="single-page">
@@ -12,19 +68,24 @@ export default function PostDetails() {
                         <div className="info">
                             <div className="top">
                                 <div className="post">
-                                    <h1>{singlePostData.title}</h1>
+                                    <h1>{postDetails.title}</h1>
                                     <div className="address">
                                         <img src="/pin.png" alt="" />
-                                        <span>{singlePostData.address}</span>
+                                        <span>
+                                            {postDetails.address?.description},{" "}
+                                            {postDetails.address?.ward},{" "}
+                                            {postDetails.address?.district},{" "}
+                                            {postDetails.address?.city}
+                                        </span>
                                     </div>
                                     <div className="price">
-                                        {singlePostData.price}tr /tháng
+                                        {postDetails.price}tr /tháng
                                     </div>
                                 </div>
                             </div>
 
                             <div className="bottom">
-                                {singlePostData.description}
+                                {postDetails.description}
                             </div>
                         </div>
                     </div>
@@ -40,24 +101,24 @@ export default function PostDetails() {
                             </div> */}
                             <div className="feature">
                                 <img src={userData.image} alt="" />
-                                <span>{userData.name}</span>
+                                <span>{postDetails.user?.full_name}</span>
                             </div>
                             <div className="feature">
-                                <img src="utility.png" alt="" />
+                                <img src="/utility.png" alt="" />
                                 <div className="feature-text">
                                     <span>Tiện lợi</span>
                                     <p>Người thuê chịu trách nhiệm</p>
                                 </div>
                             </div>
                             <div className="feature">
-                                <img src="pet.png" alt="" />
+                                <img src="/pet.png" alt="" />
                                 <div className="feature-text">
                                     <span>Thú cưng</span>
                                     <p>Được phép</p>
                                 </div>
                             </div>
                             <div className="feature">
-                                <img src="fee.png" alt="" />
+                                <img src="/fee.png" alt="" />
                                 <div className="feature-text">
                                     <span>Phí thuê</span>
                                     <p>
@@ -72,10 +133,27 @@ export default function PostDetails() {
                                 <img src="/chat.png" alt="" />
                                 Gửi tin nhắn
                             </button>
-                            <button>
-                                <img src="/heart.png" alt="" />
-                                Thích bài viết
-                            </button>
+                            {liked ? (
+                                <div
+                                    onClick={() => handleLiked()}
+                                    className="icon heart"
+                                >
+                                    <button>
+                                        <img src="/likedHeart.png" alt="" />
+                                        Thích bài viết
+                                    </button>
+                                </div>
+                            ) : (
+                                <div
+                                    className="icon"
+                                    onClick={() => handleLiked()}
+                                >
+                                    <button>
+                                        <img src="/heart.png" alt="" />
+                                        Thích bài viết
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

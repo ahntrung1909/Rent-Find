@@ -12,6 +12,7 @@ import {
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atom";
 import axios from "axios";
+import { message, notification } from "antd";
 
 export default function UploadPost() {
     const [user, setUser] = useRecoilState(userState);
@@ -94,11 +95,16 @@ export default function UploadPost() {
                 >
                     Đăng bài viết
                 </h1>
-                <Link to="/">
-                    Quay về trang chủ <ArrowRightOutlined />
-                </Link>
+                <div style={{ paddingTop: "25px" }}>
+                    <Link to="/">
+                        Quay về trang chủ <ArrowRightOutlined />
+                    </Link>
+                </div>
                 {/*tý  chỉnh  */}
             </div>
+            <p style={{ marginBottom: "20px" }}>
+                Đăng bài tìm kiếm hoặc cho thuê nhà trọ
+            </p>
             <ProForm
                 submitter={{
                     searchConfig: {
@@ -113,17 +119,16 @@ export default function UploadPost() {
                             values
                         )
                         .then((res) => {
-                            // if (res.status === 200) {
-                            //     message.success("Tạo bài viết thành công !");
-                            //     setTimeout(() => {
-                            //         window.location.href =
-                            //             "http://localhost:5173/login";
-                            //     }, 1500);
-                            // }
-                            console.log("res: ", res);
+                            if (res.status === 200) {
+                                message.success("Tạo bài viết thành công !");
+                                setTimeout(() => {
+                                    window.location.href =
+                                        "http://localhost:5173/";
+                                }, 1000);
+                            }
                         })
                         .catch((err) => {
-                            // message.error("Tạo bài viết thất bại !");
+                            message.error("Tạo bài viết thất bại !");
                             console.log(err);
                         });
                 }}
@@ -156,26 +161,26 @@ export default function UploadPost() {
                 />
 
                 <ProFormUploadButton
-                    name="image"
+                    name="images"
                     label="Tải ảnh lên"
                     title="Chọn để tải lên"
                     max={4}
                     fieldProps={{
                         beforeUpload: () => false, // Prevent the upload automatically
                     }}
-                    rules={[{ required: true, message: "Hãy chọn ảnh" }]}
+                    // rules={[{ required: true, message: "Hãy chọn ảnh" }]}
                 />
 
                 <ProFormText
                     name="price"
                     label="Giá tiền"
                     placeholder="Nhập giá tiền"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập giá tiền",
-                        },
-                    ]}
+                    // rules={[
+                    //     {
+                    //         required: true,
+                    //         message: "Vui lòng nhập giá tiền",
+                    //     },
+                    // ]}
                 />
 
                 <ProFormSelect

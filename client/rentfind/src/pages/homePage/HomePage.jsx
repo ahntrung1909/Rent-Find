@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 
 import List from "../../components/List/list";
-import { ProFormSelect } from "@ant-design/pro-components";
+import {
+    ProFormSelect,
+    ProForm,
+    ProFormText,
+} from "@ant-design/pro-components";
 import "./homePage.scss";
 import axios from "axios";
 
@@ -71,7 +75,7 @@ export default function HomePage() {
     };
     return (
         <div className="container" style={{ marginBottom: "50px" }}>
-            <h1 style={{ marginBottom: "50px" }}>Trang chủ</h1>
+            <h1 style={{ marginBottom: "50px" }}>Tìm kiếm chỗ thuê ưng ý</h1>
             <div className="content">
                 <div className="left">
                     <List />
@@ -84,56 +88,85 @@ export default function HomePage() {
                             top: "-4px",
                         }}
                     >
-                        Xem theo Danh Mục
+                        Tìm kiếm
                     </h2>
-                    <ProFormSelect
-                        name="price"
-                        label="Giá"
-                        placeholder="Chọn khoảng giá"
-                        options={[
-                            // { label: "Chọn khoảng giá", value: "" },
-                            { label: "Dưới 1 triệu", value: "under_1_million" },
-                            { label: "1 đến 2 triệu", value: "1_to_2_million" },
-                            { label: "2 đến 3 triệu", value: "2_to_3_million" },
-                            { label: "3 đến 5 triệu", value: "3_to_5_million" },
-                        ]}
-                    />
-                    <ProFormSelect
-                        name="city"
-                        label="Thành phố"
-                        placeholder="Chọn thành phố"
-                        options={
-                            provinces &&
-                            provinces.map((province) => ({
-                                label: province.province_name,
-                                value: province.province_name,
-                            }))
-                        }
-                        onChange={handleCityChange}
-                    />
+                    <ProForm
+                        submitter={{
+                            searchConfig: {
+                                submitText: "Tìm",
+                            },
+                            resetButtonProps: false,
+                        }}
+                        onFinish={async (values) => {
+                            console.log(values);
+                        }}
+                    >
+                        <ProFormText
+                            name="search"
+                            label="Tìm kiếm"
+                            placeholder="Nhập từ khóa tìm kiếm"
+                        />
+                        <ProFormSelect
+                            name="price"
+                            label="Giá"
+                            placeholder="Chọn khoảng giá"
+                            options={[
+                                // { label: "Chọn khoảng giá", value: "" },
+                                {
+                                    label: "Dưới 1 triệu",
+                                    value: "under_1_million",
+                                },
+                                {
+                                    label: "1 đến 2 triệu",
+                                    value: "1_to_2_million",
+                                },
+                                {
+                                    label: "2 đến 3 triệu",
+                                    value: "2_to_3_million",
+                                },
+                                {
+                                    label: "3 đến 5 triệu",
+                                    value: "3_to_5_million",
+                                },
+                            ]}
+                        />
+                        <ProFormSelect
+                            name="city"
+                            label="Thành phố"
+                            placeholder="Chọn thành phố"
+                            options={
+                                provinces &&
+                                provinces.map((province) => ({
+                                    label: province.province_name,
+                                    value: province.province_name,
+                                }))
+                            }
+                            onChange={handleCityChange}
+                        />
 
-                    <ProFormSelect
-                        name="district"
-                        label="Quận/Huyện"
-                        placeholder="Chọn quận/huyện"
-                        options={districts.map((district) => ({
-                            label: district.district_name,
-                            value: district.district_name,
-                        }))}
-                        onChange={handleDistrictChange}
-                        disabled={!districts.length}
-                    />
+                        <ProFormSelect
+                            name="district"
+                            label="Quận/Huyện"
+                            placeholder="Chọn quận/huyện"
+                            options={districts.map((district) => ({
+                                label: district.district_name,
+                                value: district.district_name,
+                            }))}
+                            onChange={handleDistrictChange}
+                            disabled={!districts.length}
+                        />
 
-                    <ProFormSelect
-                        name="ward"
-                        label="Phường/Xã"
-                        placeholder="Chọn phường/xã"
-                        options={wards.map((ward) => ({
-                            label: ward.ward_name,
-                            value: ward.ward_name,
-                        }))}
-                        disabled={!wards.length}
-                    />
+                        <ProFormSelect
+                            name="ward"
+                            label="Phường/Xã"
+                            placeholder="Chọn phường/xã"
+                            options={wards.map((ward) => ({
+                                label: ward.ward_name,
+                                value: ward.ward_name,
+                            }))}
+                            disabled={!wards.length}
+                        />
+                    </ProForm>
                 </div>
             </div>
         </div>

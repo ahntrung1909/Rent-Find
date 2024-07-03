@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             ImgPost.belongsTo(models.Posts, {
-                foreignKey: "postId",
+                foreignKey: "post_id",
                 as: "posts",
             });
         }
@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 type: DataTypes.STRING,
             },
-            imgUrl: DataTypes.STRING,
+            img_url: DataTypes.STRING,
             public_id: DataTypes.STRING,
             post_id: DataTypes.STRING,
         },

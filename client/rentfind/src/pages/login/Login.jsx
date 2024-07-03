@@ -107,7 +107,7 @@ export default function Login() {
                     }}
                 >
                     <a href="/register">Đăng ký ?</a>
-                    <a href="/change-password">Đổi mật khẩu ?</a>
+                    <a href="/reset-password">Quên mật khẩu ?</a>
                 </div>
             </LoginForm>
         </>

@@ -1,5 +1,5 @@
 import "./profile.scss";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { ArrowRightOutlined } from "@ant-design/icons";
 
@@ -10,14 +10,17 @@ import {
     ProFormSelect,
     viVNIntl,
 } from "@ant-design/pro-components";
-import { ConfigProvider } from "antd";
-import { useRecoilState } from "recoil";
-import { userState } from "../../recoil/atom";
+import { ConfigProvider, message } from "antd";
 
 import axios from "axios";
+import { getDecodedToken } from "../../utils/auth";
 
 export default function Profile() {
-    const [user, setUser] = useRecoilState(userState);
+    const [currentUser, setCurrentUser] = useState([]);
+    const [isDisabled, setIsDisabled] = useState(false);
+    let currentUserId = useParams();
+    const accountUserId = getDecodedToken().id;
+
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
@@ -45,26 +48,83 @@ export default function Profile() {
         setSelectedCity(value);
         setDistricts([]);
         setWards([]);
-        const response = await fetch(
-            `http://localhost:3000/api/public/vapi/province/district/${value}`
+        const selectedProvince = provinces.find(
+            (province) => province.province_name === value
         );
-        const result = await response.json();
+        const provinceId = selectedProvince
+            ? selectedProvince.province_id
+            : null;
 
-        const data = result.results;
-        setDistricts(data);
+        if (provinceId) {
+            const response = await fetch(
+                `http://localhost:3000/api/public/vapi/province/district/${provinceId}`
+            );
+            const result = await response.json();
+            const data = result.results;
+            setDistricts(data);
+        }
     };
 
     const handleDistrictChange = async (value) => {
         setSelectedDistrict(value);
         setWards([]);
-        const response = await fetch(
-            `http://localhost:3000/api/public/vapi/province/ward/${value}`
+        const selectedDistrict = districts.find(
+            (district) => district.district_name === value
         );
-        const result = await response.json();
+        const districtId = selectedDistrict
+            ? selectedDistrict.district_id
+            : null;
 
-        const data = result.results;
-        setWards(data);
+        if (districtId) {
+            const response = await fetch(
+                `http://localhost:3000/api/public/vapi/province/ward/${districtId}`
+            );
+            const result = await response.json();
+            const data = result.results;
+            setWards(data);
+        }
     };
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:3000/api/user/user-information/${currentUserId.id}`
+                );
+                const data = response.data;
+
+                console.log(data);
+
+                // Kiểm tra nếu user_address_id tồn tại
+                if (data.user_address_id) {
+                    const addressResponse = await axios.get(
+                        `http://localhost:3000/api/addresses/address-information/${data.user_address_id}`
+                    );
+
+                    const detailedUser = {
+                        ...data,
+                        address: addressResponse.data,
+                    };
+
+                    console.log(detailedUser);
+                    setCurrentUser(detailedUser);
+                } else {
+                    // Nếu user_address_id không tồn tại, chỉ gán dữ liệu user
+                    setCurrentUser(data);
+                }
+
+                if (accountUserId !== currentUserId.id) {
+                    setIsDisabled(true);
+                    // setIsDisabled(prev => !prev);
+                }
+            } catch (error) {
+                console.log("error: " + error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
     return (
         <div className="container">
             <div
@@ -81,9 +141,11 @@ export default function Profile() {
                 >
                     Thông tin người dùng
                 </h1>
-                <Link to="/">
-                    Quay về trang chủ <ArrowRightOutlined />
-                </Link>
+                <div style={{ marginTop: "25px" }}>
+                    <Link to="/">
+                        Quay về trang chủ <ArrowRightOutlined />
+                    </Link>
+                </div>
                 {/*tý  chỉnh  */}
             </div>
             <ProForm
@@ -94,7 +156,27 @@ export default function Profile() {
                     },
                 }}
                 onFinish={async (values) => {
-                    console.log(values);
+                    axios
+                        .post(
+                            `http://localhost:3000/api/user/update-user-information/`,
+                            values
+                        )
+                        .then((res) => {
+                            // if (res.status === 200) {
+                            //     message.success(
+                            //         "Chỉnh sửa người dùng thành công !"
+                            //     );
+                            //     setTimeout(() => {
+                            //         window.location.href =
+                            //             "http://localhost:5173/";
+                            //     }, 1000);
+                            // }
+                            console.log("res" + res);
+                        })
+                        .catch((err) => {
+                            message.error("Chỉnh sửa người dùng thất bại !");
+                            console.log(err);
+                        });
                 }}
                 onReset={() => {
                     window.location.href = "http://localhost:5173/";
@@ -103,7 +185,7 @@ export default function Profile() {
                 <ProFormText
                     name="fullName"
                     label="Tên người dùng"
-                    value={user?.data.full_name}
+                    value={currentUser.full_name}
                     placeholder="Nhập tên người dùng"
                     rules={[
                         {
@@ -111,17 +193,19 @@ export default function Profile() {
                             message: "Vui lòng nhập tên người dùng",
                         },
                     ]}
+                    disabled={isDisabled}
                 />
 
                 <ConfigProvider locale={viVNIntl}>
                     <ProFormDatePicker
                         name="dob"
+                        value={currentUser.dob}
                         label="Nhập ngày tháng năm sinh:"
-                        value={user?.data.dob}
                         placeholder={"Date of Birth"}
                         fieldProps={{
                             size: "large",
                         }}
+                        disabled={isDisabled}
                         style={{
                             width: 1000,
                             display: "flex",
@@ -132,7 +216,7 @@ export default function Profile() {
                 <ProFormText
                     name="phoneNumber"
                     label="Số điện thoại"
-                    value={user?.data.phone_number}
+                    value={currentUser.phone_number}
                     placeholder="Nhập số điện thoại"
                     rules={[
                         {
@@ -144,19 +228,22 @@ export default function Profile() {
                             message: "Số điện thoại không hợp lệ",
                         },
                     ]}
+                    disabled={isDisabled}
                 />
 
                 <ProFormSelect
                     name="city"
+                    value={currentUser.address?.city}
                     label="Thành phố"
                     placeholder="Chọn thành phố"
                     options={
                         provinces &&
                         provinces.map((province) => ({
                             label: province.province_name,
-                            value: province.province_id,
+                            value: province.province_name,
                         }))
                     }
+                    disabled={isDisabled}
                     onChange={handleCityChange}
                     rules={[
                         { required: true, message: "Vui lòng chọn thành phố" },
@@ -166,13 +253,14 @@ export default function Profile() {
                 <ProFormSelect
                     name="district"
                     label="Quận/Huyện"
+                    value={currentUser.address?.district}
                     placeholder="Chọn quận/huyện"
                     options={districts.map((district) => ({
                         label: district.district_name,
-                        value: district.district_id,
+                        value: district.district_name,
                     }))}
                     onChange={handleDistrictChange}
-                    disabled={!districts.length}
+                    disabled={!districts.length || isDisabled} //kiểm tra lại
                     rules={[
                         { required: true, message: "Vui lòng chọn quận/huyện" },
                     ]}
@@ -181,20 +269,23 @@ export default function Profile() {
                 <ProFormSelect
                     name="ward"
                     label="Phường/Xã"
+                    value={currentUser.address?.ward}
                     placeholder="Chọn phường/xã"
                     options={wards.map((ward) => ({
                         label: ward.ward_name,
-                        value: ward.ward_id,
+                        value: ward.ward_name,
                     }))}
-                    disabled={!wards.length}
+                    disabled={!wards.length || isDisabled} //kiểm tra lại //sai sai=>sai đúng sai=>đúng sai đúng=>đúng
                     rules={[
                         { required: true, message: "Vui lòng chọn phường/xã" },
                     ]}
                 />
 
                 <ProFormText
-                    name={["address", "description"]}
+                    name={"description"}
+                    value={currentUser.address?.description}
                     label="Địa chỉ cụ thể"
+                    disabled={isDisabled}
                     placeholder="Địa chỉ cụ thể"
                 />
             </ProForm>

@@ -7,11 +7,9 @@ import { routers } from "./utils/routers";
 import { RecoilRoot } from "recoil";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <RecoilRoot>
-            <RouterProvider router={routers}>
-                <App />
-            </RouterProvider>
-        </RecoilRoot>
-    </React.StrictMode>
+    <RecoilRoot>
+        <RouterProvider router={routers}>
+            <App />
+        </RouterProvider>
+    </RecoilRoot>
 );

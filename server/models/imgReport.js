@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
                 primaryKey: true,
                 type: DataTypes.STRING,
             },
-            imgUrl: DataTypes.STRING,
+            img_url: DataTypes.STRING,
             public_id: DataTypes.STRING,
             report_id: DataTypes.STRING,
         },
