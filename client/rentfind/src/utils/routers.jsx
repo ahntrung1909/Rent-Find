@@ -13,6 +13,7 @@ import ChangePassword from "../pages/resetPassword/ChangePassword";
 import LikedPosts from "../pages/likedPosts/LikedPosts";
 import AboutUs from "../pages/aboutUs/AboutUs";
 import MyPosts from "../pages/myPosts/MyPosts";
+import HiddenPosts from "../pages/hiddenPosts/HiddenPosts";
 
 export const routers = createBrowserRouter([
     {
@@ -73,6 +74,14 @@ export const routers = createBrowserRouter([
                 element: (
                     <AuthGuard>
                         <MyPosts />
+                    </AuthGuard>
+                ),
+            },
+            {
+                path: "/my-hidden-posts/:id",
+                element: (
+                    <AuthGuard>
+                        <HiddenPosts />
                     </AuthGuard>
                 ),
             },

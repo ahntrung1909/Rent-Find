@@ -158,20 +158,19 @@ export default function Profile() {
                 onFinish={async (values) => {
                     axios
                         .post(
-                            `http://localhost:3000/api/user/update-user-information/`,
+                            `http://localhost:3000/api/user/update-user-information`,
                             values
                         )
                         .then((res) => {
-                            // if (res.status === 200) {
-                            //     message.success(
-                            //         "Chỉnh sửa người dùng thành công !"
-                            //     );
-                            //     setTimeout(() => {
-                            //         window.location.href =
-                            //             "http://localhost:5173/";
-                            //     }, 1000);
-                            // }
-                            console.log("res" + res);
+                            if (res.status === 200) {
+                                message.success(
+                                    "Chỉnh sửa người dùng thành công !"
+                                );
+                                setTimeout(() => {
+                                    window.location.href =
+                                        "http://localhost:5173/";
+                                }, 1000);
+                            }
                         })
                         .catch((err) => {
                             message.error("Chỉnh sửa người dùng thất bại !");

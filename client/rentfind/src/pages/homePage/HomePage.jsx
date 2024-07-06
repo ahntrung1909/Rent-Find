@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import List from "../../components/List/list";
 import {
     ProFormSelect,
@@ -10,6 +9,8 @@ import "./homePage.scss";
 import axios from "axios";
 
 export default function HomePage() {
+    const [homePagePosts, setHomePagePosts] = useState([]);
+    const [typePost, setTypePost] = useState("HOME_PAGE");
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
@@ -31,6 +32,52 @@ export default function HomePage() {
         };
 
         fetchProvinces();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            //sửa lại theo cách Trưởng, xử lý ở be
+            const response = await axios.get(
+                `http://localhost:3000/api/post/get-posts`
+            );
+            const data = await response.data;
+            console.log(data);
+
+            const detailedPostsPromises = data.map(async (homePagePosts) => {
+                const userResponse = await axios.get(
+                    `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
+                );
+                const addressResponse = await axios.get(
+                    `http://localhost:3000/api/addresses/address-information/${homePagePosts.post_address_id}`
+                );
+
+                let imgPostResponse;
+                try {
+                    imgPostResponse = await axios.get(
+                        `http://localhost:3000/api/img-post/img/${homePagePosts.id}`
+                    );
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        console.log("Image post not found, skipping...");
+                        imgPostResponse = { data: null };
+                    } else {
+                        throw error;
+                    }
+                }
+
+                return {
+                    ...homePagePosts,
+                    user: userResponse.data,
+                    address: addressResponse.data,
+                    imgPost: imgPostResponse.data,
+                };
+            });
+
+            const detailedPosts = await Promise.all(detailedPostsPromises);
+            setHomePagePosts(detailedPosts);
+        };
+
+        fetchData();
     }, []);
 
     const handleCityChange = async (value) => {
@@ -78,7 +125,7 @@ export default function HomePage() {
             <h1 style={{ marginBottom: "50px" }}>Tìm kiếm chỗ thuê ưng ý</h1>
             <div className="content">
                 <div className="left">
-                    <List />
+                    <List listPost={homePagePosts} type={typePost} />
                 </div>
                 <div className="right">
                     <h2

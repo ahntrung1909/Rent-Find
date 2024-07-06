@@ -113,6 +113,7 @@ export default function UploadPost() {
                     },
                 }}
                 onFinish={async (values) => {
+                    console.log("values:" + values);
                     axios
                         .post(
                             "http://localhost:3000/api/post/upload-post",

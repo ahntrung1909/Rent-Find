@@ -15,6 +15,7 @@ const UserController = {
     updateInfo: async (req, res) => {
         const newId1 = v4();
         const currentUserId = req.user.dataValues.id;
+        console.log(currentUserId);
         const {
             fullName,
             dob,
@@ -26,22 +27,53 @@ const UserController = {
         } = req.body;
 
         try {
-            await User.update(
-                {
-                    dob: dob,
-                    full_name: fullName,
-                    phone_number: phoneNumber,
-                    user_address_id: newId1,
-                },
-                {
-                    where: {
-                        id: currentUserId,
+            // Tìm người dùng hiện tại
+            const user = await User.findByPk(currentUserId);
+
+            if (!user) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            // Cập nhật thông tin người dùng
+            user.full_name = fullName;
+            user.dob = dob;
+            user.phone_number = phoneNumber;
+
+            if (!user.user_address_id) {
+                // Nếu user_address_id là null, tạo một địa chỉ mới
+                const newAddress = await Addresses.create({
+                    id: newId1,
+                    city,
+                    district,
+                    ward,
+                    description,
+                });
+
+                // Cập nhật user_address_id của người dùng
+                user.user_address_id = newAddress.id;
+            } else {
+                // Nếu user_address_id đã tồn tại, cập nhật bản ghi địa chỉ hiện tại
+                await Addresses.update(
+                    {
+                        city,
+                        district,
+                        ward,
+                        description,
                     },
-                }
-            );
-            res.status(200).json({
-                message: "User information updated successfully",
-            });
+                    {
+                        where: {
+                            id: user.user_address_id,
+                        },
+                    }
+                );
+            }
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await user.save();
+
+            return res
+                .status(200)
+                .json({ message: "User information updated successfully" });
         } catch (error) {
             console.error("Error updating user information:", error);
             res.status(500).json({

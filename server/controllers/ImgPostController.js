@@ -3,10 +3,11 @@ const ImgPost = model.ImgPost;
 
 const ImgPostController = {
     getImage: async (req, res) => {
-        console.log("id: " + req.params.id);
+        // console.log("id: " + req.params.id);
         const imgPost = await ImgPost.findOne({
-            where: { id: req.params.id },
+            where: { post_id: req.params.id },
         });
+        console.log(imgPost);
         if (imgPost) {
             return res.json(imgPost);
         } else {

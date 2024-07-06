@@ -37,6 +37,12 @@ export default function Header() {
                 }, 750);
                 break;
             case "5":
+                message.info("Những bài viết đã ẩn của bạn");
+                setTimeout(() => {
+                    window.location.href = `http://localhost:5173/my-hidden-posts/${user.data.id}`;
+                }, 750);
+                break;
+            case "6":
                 logout();
                 message.success({
                     message: "Đăng xuất thành công",
@@ -65,10 +71,14 @@ export default function Header() {
         {
             label: "Bài viết đã thích",
             key: "4",
-        }, //sẽ cho vào trong bài viết của tôi
+        },
+        {
+            label: "Bài viết đã ẩn",
+            key: "5",
+        },
         {
             label: "Đăng xuất",
-            key: "5",
+            key: "6",
         },
     ];
     return (

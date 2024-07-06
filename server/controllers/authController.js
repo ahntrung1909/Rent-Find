@@ -111,8 +111,6 @@ const authController = {
         const { oldPassword, newPassword, reNewPassword } = req.body;
         const currentUserPassword = req.user.dataValues.password;
         const currentUserEmail = req.user.dataValues.email;
-        // const currentUser = req.user.dataValues;
-        // console.log(currentUser);
 
         if (currentUserPassword !== oldPassword) {
             return res.status(500).json({

@@ -1,46 +1,45 @@
-import "./myPosts.scss";
+import "./hiddenPosts.scss";
 import React, { useState, useEffect } from "react";
-import { message, notification } from "antd";
 import List from "../../components/List/list";
+import { message, notification } from "antd";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-function MyPosts() {
-    //thêm lấy imgPost
-    const [myPosts, setMyPosts] = useState([]);
-    const [typePost, setTypePost] = useState("MY_POST");
+function HiddenPosts() {
+    const [typePost, setTypePost] = useState("HIDDEN_POST");
+    const [hiddenPosts, setHiddenPosts] = useState([]);
     const params = useParams();
 
-    const handleHiddenPost = async (id) => {
+    const handleShowPost = async (id) => {
         const res = await axios.post(
             `http://localhost:3000/api/post/update-post/${id}`,
             {
-                status: false,
+                status: true,
             }
         );
         if (res.status === 200) {
-            message.success("Ẩn bài viết thành công");
+            message.success("Hiện bài viết thành công!");
         }
         fetchData();
     };
     const fetchData = async () => {
         //sửa lại theo cách Trưởng, xử lý ở be
         const response = await axios.get(
-            `http://localhost:3000/api/post/get-my-posts/${params.id}`
+            `http://localhost:3000/api/post/get-my-hidden-posts/${params.id}`
         );
         const data = await response.data;
 
-        const detailedPostsPromises = data.map(async (myPosts) => {
+        const detailedPostsPromises = data.map(async (hiddenPosts) => {
             const userResponse = await axios.get(
-                `http://localhost:3000/api/user/user-information/${myPosts.user_id}`
+                `http://localhost:3000/api/user/user-information/${hiddenPosts.user_id}`
             );
             const addressResponse = await axios.get(
-                `http://localhost:3000/api/addresses/address-information/${myPosts.post_address_id}`
+                `http://localhost:3000/api/addresses/address-information/${hiddenPosts.post_address_id}`
             );
 
             let imgPostResponse;
             try {
                 imgPostResponse = await axios.get(
-                    `http://localhost:3000/api/img-post/img/${myPosts.id}`
+                    `http://localhost:3000/api/img-post/img/${hiddenPosts.id}`
                 );
             } catch (error) {
                 if (error.response && error.response.status === 404) {
@@ -52,7 +51,7 @@ function MyPosts() {
             }
 
             return {
-                ...myPosts,
+                ...hiddenPosts,
                 user: userResponse.data,
                 address: addressResponse.data,
                 imgPost: imgPostResponse.data,
@@ -60,33 +59,30 @@ function MyPosts() {
         });
 
         const detailedPosts = await Promise.all(detailedPostsPromises);
-        setMyPosts(detailedPosts);
+        setHiddenPosts(detailedPosts);
     };
+
     useEffect(() => {
         fetchData();
     }, []);
 
+    console.log(hiddenPosts);
     return (
         <div className="container">
-            <h1 style={{ marginBottom: "25px" }}>Bài viết của tôi</h1>
+            <h1 style={{ marginBottom: "25px" }}>Bài viết đã ẩn</h1>
             <div className="list">
-                {myPosts.length > 0 ? (
+                {hiddenPosts.length > 0 ? (
                     <List
-                        listPost={myPosts}
+                        listPost={hiddenPosts}
                         type={typePost}
-                        handleHiddenPost={handleHiddenPost}
+                        handleShowPost={handleShowPost}
                     />
                 ) : (
-                    <>
-                        <p>Bạn chưa đăng bài viết nào</p>
-                        <a style={{ color: "blue" }} href="/upload-post">
-                            Đăng bài?
-                        </a>
-                    </>
+                    <p>Bạn đang không ẩn bài viết nào</p>
                 )}
             </div>
         </div>
     );
 }
 
-export default MyPosts;
+export default HiddenPosts;

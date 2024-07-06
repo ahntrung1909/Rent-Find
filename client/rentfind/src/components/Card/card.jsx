@@ -2,20 +2,29 @@ import "./card.scss";
 import React, { useState } from "react";
 import { listData } from "../../lib/dummydata.js";
 import { Link } from "react-router-dom";
+import FormModal from "../Modal/Modal.jsx";
 
-function Card({ item }) {
+function Card(props) {
+    const { item, type, handleShowPost, handleHiddenPost } = props;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     //fake ảnh
     const imgListData = listData.map((item) => {
         return item.image;
+        // console.log(imgListData);
     });
-    // console.log(imgListData);
 
     const [liked, setLiked] = useState(false);
     const handleLiked = () => {
         setLiked((prev) => !prev);
     };
+
     return (
         <div className="card">
+            <FormModal
+                setIsModalOpen={setIsModalOpen}
+                isModalOpen={isModalOpen}
+            />
             <Link to={`/post/${item.id}`} className="image-container">
                 {/* <img src={`https://res.cloudinary.com/dzmyvhntg/image/upload/rent-find/whfuq3x5ylyuooescsah`} alt="" /> */}
                 <img src={imgListData} alt="" />
@@ -24,9 +33,30 @@ function Card({ item }) {
             <div className="text-container">
                 <h2 className="title">
                     <Link to={`/post/${item.id}`}>{item.title}</Link>
-                    <div className="icon">
-                        <img src="/flag.png" alt="" />
-                    </div>
+                    {type === "MY_POST" && (
+                        <div
+                            onClick={() => handleHiddenPost(item.id)}
+                            className="icon"
+                        >
+                            <p>Ẩn</p>
+                        </div>
+                    )}
+                    {type === "HOME_PAGE" && (
+                        <div
+                            onClick={() => setIsModalOpen(true)}
+                            className="icon"
+                        >
+                            <img src="/flag.png" alt="" />
+                        </div>
+                    )}
+                    {type === "HIDDEN_POST" && (
+                        <div
+                            onClick={() => handleShowPost(item.id)}
+                            className="icon"
+                        >
+                            <p>Hiện</p>
+                        </div>
+                    )}
                 </h2>
                 <p className="address">
                     <img src="/pin.png" alt="" />

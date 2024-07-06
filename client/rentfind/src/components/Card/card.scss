@@ -44,6 +44,15 @@
                 top: 3px;
                 cursor: pointer;
             }
+            p {
+                position: absolute;
+                right: 70px;
+                top: 3px;
+                cursor: pointer;
+                font-weight: normal;
+                font-size: 14px;
+            }
+
             &:hover {
                 color: black;
                 scale: 1.01;

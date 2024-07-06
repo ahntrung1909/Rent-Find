@@ -8,8 +8,8 @@ router.get("/", function (req, res, next) {
     res.send("respond with a resource");
 });
 router.get(`/user-information/:id`, userController.getInfo);
-router.get(
-    `/update-user-information/`,
+router.post(
+    `/update-user-information`,
     authenticateJWT,
     userController.updateInfo
 );

@@ -84,6 +84,46 @@ const PostController = {
             res.status(500).json({ errors: error.message });
         }
     },
+    getMyPosts: async (req, res) => {
+        try {
+            const postId = req.params.id;
+            const myPost = await Posts.findAll({
+                where: { user_id: postId, status: "true" },
+            });
+
+            //tìm cả user và address luôn ở đây
+            return res.json(myPost);
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    getMyHidPosts: async (req, res) => {
+        try {
+            const postId = req.params.id;
+            const hiddenPost = await Posts.findAll({
+                where: { user_id: postId, status: "false" },
+            });
+
+            //tìm cả user và address luôn ở đây
+            return res.json(hiddenPost);
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    updatePost: async (req, res) => {
+        try {
+            const idPost = req.params.id;
+            const body = req.body;
+            await Posts.update(body, {
+                where: {
+                    id: idPost,
+                },
+            });
+            return res.status(200).json({ message: "Chỉnh sửa thành công !" });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
 };
 
 module.exports = PostController;
