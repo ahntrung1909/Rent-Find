@@ -1,60 +1,85 @@
-import React, { useState, useRef } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { Form, Upload, Modal, Input } from "antd";
+import React, { useState } from "react";
+import { Modal, Button, Form, Input } from "antd";
+import {
+    ProForm,
+    ProFormTextArea,
+    ProFormUploadButton,
+} from "@ant-design/pro-components";
+import axios from "axios";
 
-const { TextArea } = Input;
-export default function FormModal({ isModalOpen, setIsModalOpen }) {
-    const formRef = useRef(null);
+function FormModal({ isModalOpen, setIsModalOpen }) {
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
 
     const handleOk = () => {
-        formRef.current.submit();
+        setIsModalOpen(false);
     };
 
     const handleCancel = () => {
         setIsModalOpen(false);
     };
+
     const onFinish = (values) => {
-        console.log("Form values:", values);
-        setIsModalOpen(false);
+        console.log("values:" + values);
+        axios
+            .post("http://localhost:3000/api/report/upload-report", values)
+            .then((res) => {
+                console.log("res: " + res);
+                // if (res.status === 200) {
+                //     message.success("Tạo bài viết thành công !");
+                //     setTimeout(() => {
+                //         window.location.href = "http://localhost:5173/";
+                //     }, 1000);
+                // }
+            })
+            .catch((err) => {
+                // message.error("Tạo bài viết thất bại !");
+                console.log(err);
+            });
     };
 
     return (
         <>
             <Modal
-                title="Basic Modal"
+                title="Tố cáo bài viết"
                 open={isModalOpen}
                 onOk={handleOk}
                 onCancel={handleCancel}
+                footer={null}
             >
-                <Form
-                    ref={formRef}
-                    labelCol={{ span: 4 }}
-                    wrapperCol={{ span: 14 }}
-                    layout="horizontal"
-                    style={{ maxWidth: 600 }}
+                <ProForm
                     onFinish={onFinish}
+                    submitter={{
+                        searchConfig: {
+                            submitText: "Lưu",
+                            resetText: "Hủy",
+                        },
+                    }}
                 >
-                    <Form.Item name="textarea" label="TextArea">
-                        <TextArea rows={4} />
-                    </Form.Item>
-
-                    <Form.Item label="Upload" valuePropName="fileList">
-                        <Upload
-                            action="http://localhost:3000/api/post/upload-report-image"
-                            //"http://localhost:3000/api/post/upload-report"
-                            listType="picture-card"
-                        >
-                            <button
-                                style={{ border: 0, background: "none" }}
-                                type="button"
-                            >
-                                <PlusOutlined />
-                                <div style={{ marginTop: 8 }}>Upload</div>
-                            </button>
-                        </Upload>
-                    </Form.Item>
-                </Form>
+                    <ProFormTextArea
+                        name="textarea"
+                        label="Lý do tố cáo"
+                        placeholder="Hãy nhập nội dung"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Vui lòng nhập lý do tố cáo",
+                            },
+                        ]}
+                    />
+                    <ProFormUploadButton
+                        name="image"
+                        label="Minh chứng"
+                        title="Chọn để nhập"
+                        fieldProps={{
+                            beforeUpload: () => false, // Prevent the upload automatically
+                        }}
+                    />
+                </ProForm>
             </Modal>
         </>
     );
 }
+
+export default FormModal;

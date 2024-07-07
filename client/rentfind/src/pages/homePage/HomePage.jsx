@@ -7,6 +7,7 @@ import {
 } from "@ant-design/pro-components";
 import "./homePage.scss";
 import axios from "axios";
+import { message } from "antd";
 
 export default function HomePage() {
     const [homePagePosts, setHomePagePosts] = useState([]);
@@ -17,67 +18,17 @@ export default function HomePage() {
     const [selectedCity, setSelectedCity] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
 
+    const fetchProvinces = async () => {
+        const response = await fetch(
+            "http://localhost:3000/api/public/vapi/province"
+        );
+        const result = await response.json();
+        const data = result.results;
+        setProvinces(data);
+    };
+
     useEffect(() => {
-        const fetchProvinces = async () => {
-            // const data = await getProvinces();
-
-            const response = await fetch(
-                "http://localhost:3000/api/public/vapi/province"
-            );
-            const result = await response.json();
-
-            const data = result.results;
-            // console.log(data, "");
-            setProvinces(data);
-        };
-
         fetchProvinces();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            //sửa lại theo cách Trưởng, xử lý ở be
-            const response = await axios.get(
-                `http://localhost:3000/api/post/get-posts`
-            );
-            const data = await response.data;
-            console.log(data);
-
-            const detailedPostsPromises = data.map(async (homePagePosts) => {
-                const userResponse = await axios.get(
-                    `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
-                );
-                const addressResponse = await axios.get(
-                    `http://localhost:3000/api/addresses/address-information/${homePagePosts.post_address_id}`
-                );
-
-                let imgPostResponse;
-                try {
-                    imgPostResponse = await axios.get(
-                        `http://localhost:3000/api/img-post/img/${homePagePosts.id}`
-                    );
-                } catch (error) {
-                    if (error.response && error.response.status === 404) {
-                        console.log("Image post not found, skipping...");
-                        imgPostResponse = { data: null };
-                    } else {
-                        throw error;
-                    }
-                }
-
-                return {
-                    ...homePagePosts,
-                    user: userResponse.data,
-                    address: addressResponse.data,
-                    imgPost: imgPostResponse.data,
-                };
-            });
-
-            const detailedPosts = await Promise.all(detailedPostsPromises);
-            setHomePagePosts(detailedPosts);
-        };
-
-        fetchData();
     }, []);
 
     const handleCityChange = async (value) => {
@@ -120,12 +71,82 @@ export default function HomePage() {
             setWards(data);
         }
     };
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(
+                "http://localhost:3000/api/post/get-posts"
+            );
+            const data = await response.data;
+            // console.log(data);
+
+            const detailedPostsPromises = data.map(async (homePagePosts) => {
+                let userResponse;
+                try {
+                    userResponse = await axios.get(
+                        `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
+                    );
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        console.log("Image post not found, skipping...");
+                        userResponse = { data: null };
+                    } else {
+                        throw error;
+                    }
+                }
+                // const userResponse = await axios.get(
+                //     `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
+                // );
+                const addressResponse = await axios.get(
+                    `http://localhost:3000/api/addresses/address-information/${homePagePosts.post_address_id}`
+                );
+
+                let imgPostResponse;
+                try {
+                    imgPostResponse = await axios.get(
+                        `http://localhost:3000/api/img-post/img/${homePagePosts.id}`
+                    );
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        console.log("Image post not found, skipping...");
+                        imgPostResponse = { data: null };
+                    } else {
+                        throw error;
+                    }
+                }
+
+                return {
+                    ...homePagePosts,
+                    User: userResponse.data,
+                    Address: addressResponse.data,
+                    ImgPost: imgPostResponse.data,
+                };
+            });
+
+            const detailedPosts = await Promise.all(detailedPostsPromises);
+            console.log(detailedPosts);
+            setHomePagePosts(detailedPosts);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
     return (
         <div className="container" style={{ marginBottom: "50px" }}>
             <h1 style={{ marginBottom: "50px" }}>Tìm kiếm chỗ thuê ưng ý</h1>
             <div className="content">
                 <div className="left">
-                    <List listPost={homePagePosts} type={typePost} />
+                    {homePagePosts.length > 0 ? (
+                        <List listPost={homePagePosts} type={typePost} />
+                    ) : (
+                        <>
+                            <p>Không tìm thấy dữ liệu!</p>
+                        </>
+                    )}
                 </div>
                 <div className="right">
                     <h2
@@ -146,11 +167,24 @@ export default function HomePage() {
                         }}
                         onFinish={async (values) => {
                             console.log(values);
+                            const response = await axios.post(
+                                `http://localhost:3000/api/post/search`,
+                                values
+                            );
+                            const data = await response.data;
+                            console.log(data);
+                            // if (data.length === 0) {
+                            //     message.info(
+                            //         "Không có dữ liệu tìm kiếm!"
+                            //     );
+                            //     return;
+                            // }
+                            setHomePagePosts(data);
                         }}
                     >
                         <ProFormText
-                            name="search"
-                            label="Tìm kiếm"
+                            name="title"
+                            label="Từ khóa"
                             placeholder="Nhập từ khóa tìm kiếm"
                         />
                         <ProFormSelect
@@ -174,6 +208,14 @@ export default function HomePage() {
                                 {
                                     label: "3 đến 5 triệu",
                                     value: "3_to_5_million",
+                                },
+                                {
+                                    label: "5 đến 7 triệu",
+                                    value: "5_to_7_million",
+                                },
+                                {
+                                    label: "7 đến 10 triệu",
+                                    value: "7_to_10_million",
                                 },
                             ]}
                         />

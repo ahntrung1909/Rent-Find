@@ -61,15 +61,15 @@ function Card(props) {
                 <p className="address">
                     <img src="/pin.png" alt="" />
                     <span>
-                        {item.address.description}, {item.address.ward},{" "}
-                        {item.address.district},<br></br> {item.address.city}
+                        {item.Address.description}, {item.Address.ward},{" "}
+                        {item.Address.district},<br></br> {item.Address.city}
                     </span>
                 </p>
                 <p className="price">{item?.price}tr /tháng</p>
                 <div className="bottom">
                     <div className="user">
-                        <Link to={`/user-information/${item.user.id}`}>
-                            {item.user.full_name}
+                        <Link to={`/user-information/${item.User.id}`}>
+                            {item.User.full_name}
                         </Link>
                     </div>
                     <div className="icons">

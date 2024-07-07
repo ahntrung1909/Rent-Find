@@ -9,5 +9,6 @@ router.post("/update-post/:id", PostController.updatePost);
 router.get("/get-detail-post/:id", PostController.getDetailsPost);
 router.get("/get-my-posts/:id", PostController.getMyPosts);
 router.get("/get-my-hidden-posts/:id", PostController.getMyHidPosts);
+router.post("/search", PostController.search);
 
 module.exports = router;

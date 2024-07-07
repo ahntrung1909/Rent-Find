@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
             Posts.belongsTo(models.Addresses, {
                 foreignKey: "post_address_id",
             });
+            Posts.belongsTo(models.User, {
+                foreignKey: "user_id",
+            });
         }
     }
     Posts.init(

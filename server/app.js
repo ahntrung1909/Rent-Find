@@ -15,7 +15,7 @@ const userRouter = require("./routes/users");
 const postRouter = require("./routes/post");
 const addressesRouter = require("./routes/addresses");
 const imgPostRouter = require("./routes/imgPost");
-
+const reportRouter = require("./routes/report");
 const app = express();
 
 app.use(
@@ -51,6 +51,7 @@ app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 app.use("/api/addresses", addressesRouter);
 app.use("/api/img-post", imgPostRouter);
+app.use("/api/report", reportRouter);
 
 app.use("/api/public/vapi", async (req, res) => {
     const path = req.path;
@@ -59,11 +60,6 @@ app.use("/api/public/vapi", async (req, res) => {
     res.json(data);
 });
 app.use("/", indexRouter);
-
-// Catch 404 and forward to error handler
-app.use(function (req, res, next) {
-    next(createError(404));
-});
 
 // Error handler
 app.use(function (err, req, res, next) {
