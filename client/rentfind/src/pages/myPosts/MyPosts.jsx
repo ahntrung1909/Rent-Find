@@ -53,9 +53,9 @@ function MyPosts() {
 
             return {
                 ...myPosts,
-                user: userResponse.data,
-                address: addressResponse.data,
-                imgPost: imgPostResponse.data,
+                User: userResponse.data,
+                Address: addressResponse.data,
+                ImgPost: imgPostResponse.data,
             };
         });
 

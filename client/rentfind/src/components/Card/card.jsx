@@ -15,19 +15,39 @@ function Card(props) {
     });
 
     const [liked, setLiked] = useState(false);
-    const handleLiked = () => {
+    const handleLiked = async () => {
         setLiked((prev) => !prev);
+
+        // try {
+        //     if (!liked) {
+        //         // Send POST request to create a new like record
+        //         await axios.post("/api/likes", {
+        //             postId: item.id,
+        //             userId: item.User.id,
+        //         });
+        //     } else {
+        //         // Send DELETE request to remove the like record
+        //         await axios.delete(`/api/likes`, {
+        //             data: {
+        //                 postId: item.id,
+        //                 userId: item.User.id,
+        //             },
+        //         });
+        //     }
+        // } catch (error) {
+        //     console.error("Error updating like status:", error);
+        // }
     };
 
     return (
-        <div className="card">
+        <div className={type === "RENT" ? "card rent" : "card"}>
             <FormModal
                 setIsModalOpen={setIsModalOpen}
                 isModalOpen={isModalOpen}
             />
             <Link to={`/post/${item.id}`} className="image-container">
-                {/* <img src={`https://res.cloudinary.com/dzmyvhntg/image/upload/rent-find/whfuq3x5ylyuooescsah`} alt="" /> */}
-                <img src={imgListData} alt="" />
+                {/* <img src={imgListData} alt="" /> */}
+                <img src={item.ImgPost[0].img_url} alt="" />
             </Link>
 
             <div className="text-container">
@@ -41,7 +61,9 @@ function Card(props) {
                             <p>Ẩn</p>
                         </div>
                     )}
-                    {type === "HOME_PAGE" && (
+                    {(type === "HOME_PAGE" ||
+                        type === "RENT" ||
+                        type === "LEASE") && (
                         <div
                             onClick={() => setIsModalOpen(true)}
                             className="icon"
@@ -61,11 +83,11 @@ function Card(props) {
                 <p className="address">
                     <img src="/pin.png" alt="" />
                     <span>
-                        {item.Address.description}, {item.Address.ward},{" "}
+                        {item.Address.description} {item.Address.ward},{" "}
                         {item.Address.district},<br></br> {item.Address.city}
                     </span>
                 </p>
-                <p className="price">{item?.price}tr /tháng</p>
+                <p className="price">{item?.price}vnd/tháng</p>
                 <div className="bottom">
                     <div className="user">
                         <Link to={`/user-information/${item.User.id}`}>

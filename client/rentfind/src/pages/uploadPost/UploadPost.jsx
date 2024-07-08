@@ -170,6 +170,7 @@ export default function UploadPost() {
                         beforeUpload: () => false, // Prevent the upload automatically
                     }}
                     // rules={[{ required: true, message: "Hãy chọn ảnh" }]}
+                    //không có rule nhưng khi không chọn ảnh báo lỗi?
                 />
 
                 <ProFormText
@@ -182,6 +183,22 @@ export default function UploadPost() {
                     //         message: "Vui lòng nhập giá tiền",
                     //     },
                     // ]}
+                />
+
+                <ProFormSelect
+                    name="type"
+                    label="Kiểu bài đăng"
+                    placeholder="Chọn kiểu"
+                    options={[
+                        {
+                            label: "Thuê",
+                            value: "rent",
+                        },
+                        {
+                            label: "Cho Thuê",
+                            value: "lease",
+                        },
+                    ]}
                 />
 
                 <ProFormSelect
@@ -203,7 +220,7 @@ export default function UploadPost() {
 
                 <ProFormSelect
                     name="district"
-                    label="Quận/Huyện"
+                    label="Quận/ Huyện"
                     placeholder="Chọn quận/huyện"
                     options={districts.map((district) => ({
                         label: district.district_name,
@@ -218,7 +235,7 @@ export default function UploadPost() {
 
                 <ProFormSelect
                     name="ward"
-                    label="Phường/Xã"
+                    label="Phường/ Xã"
                     placeholder="Chọn phường/xã"
                     options={wards.map((ward) => ({
                         label: ward.ward_name,
@@ -233,7 +250,7 @@ export default function UploadPost() {
                 <ProFormText
                     name="description"
                     label="Địa chỉ cụ thể"
-                    placeholder="Địa chỉ cụ thể"
+                    placeholder="Nhập địa chỉ cụ thể"
                 />
             </ProForm>
         </div>

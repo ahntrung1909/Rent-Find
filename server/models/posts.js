@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             description: DataTypes.TEXT,
             price: DataTypes.FLOAT, //FLOAT
             title: DataTypes.STRING,
+            type: DataTypes.STRING,
             status: DataTypes.STRING,
             post_address_id: {
                 type: DataTypes.STRING,

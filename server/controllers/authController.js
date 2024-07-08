@@ -181,7 +181,7 @@ const authController = {
         try {
             const { password } = req.body;
             const resetEmail = myCache.take("resetEmail");
-            console.log(resetEmail);
+            // console.log(resetEmail);
             const result = await User.update(
                 { password: password },
                 { where: { email: resetEmail } }

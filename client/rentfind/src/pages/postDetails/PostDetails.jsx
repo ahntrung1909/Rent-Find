@@ -22,17 +22,17 @@ export default function PostDetails() {
             );
             const data = await response.data;
             console.log(data);
-
             const postAddressId = data.post_address_id;
             const userAddressId = data.user_id;
 
             const userResponse = await axios.get(
                 `http://localhost:3000/api/user/user-information/${userAddressId}`
             );
+
             let imgPostResponse;
             try {
                 imgPostResponse = await axios.get(
-                    `http://localhost:3000/api/img-post/img/${postId.id}`
+                    `http://localhost:3000/api/img-post/img/${data.id}`
                 );
             } catch (error) {
                 if (error.response && error.response.status === 404) {
@@ -42,15 +42,24 @@ export default function PostDetails() {
                     throw error;
                 }
             }
+
             const addressResponse = await axios.get(
                 `http://localhost:3000/api/addresses/address-information/${postAddressId}`
             );
 
+            let imgList = [];
+            if (imgPostResponse) {
+                imgList = imgPostResponse.data.map((img) => {
+                    return img.img_url;
+                });
+            }
+
+            console.log(imgList);
             const postDetailsFull = {
                 ...data,
-                user: userResponse.data,
-                imgPost: imgPostResponse.data,
-                address: addressResponse.data,
+                User: userResponse.data,
+                ImgPost: imgList,
+                Address: addressResponse.data,
             };
 
             setPostDetails(postDetailsFull);
@@ -64,7 +73,9 @@ export default function PostDetails() {
             <div className="single-page">
                 <div className="details">
                     <div className="wrapper">
-                        <Slider images={singlePostData.images} />
+                        {/* <Slider images={singlePostData.images} /> */}
+                        <Slider images={postDetails.ImgPost} />
+
                         <div className="info">
                             <div className="top">
                                 <div className="post">
@@ -72,14 +83,14 @@ export default function PostDetails() {
                                     <div className="address">
                                         <img src="/pin.png" alt="" />
                                         <span>
-                                            {postDetails.address?.description},{" "}
-                                            {postDetails.address?.ward},{" "}
-                                            {postDetails.address?.district},{" "}
-                                            {postDetails.address?.city}
+                                            {postDetails.Address?.description}{" "}
+                                            {postDetails.Address?.ward},{" "}
+                                            {postDetails.Address?.district},{" "}
+                                            {postDetails.Address?.city}
                                         </span>
                                     </div>
                                     <div className="price">
-                                        {postDetails.price}tr /tháng
+                                        {postDetails.price}vnd/tháng
                                     </div>
                                 </div>
                             </div>
@@ -95,35 +106,15 @@ export default function PostDetails() {
                     <div className="wrapper">
                         <p className="title">Người đăng bài</p>
                         <div className="list-vertical">
-                            {/* <div className="user">
-                                <img src={userData.image} alt="" />
-                                <span>{userData.name}</span>
-                            </div> */}
                             <div className="feature">
-                                <img src={userData.image} alt="" />
-                                <span>{postDetails.user?.full_name}</span>
+                                <img src="/user.jpg" alt="" />
+                                <span>{postDetails.User?.full_name}</span>
                             </div>
                             <div className="feature">
-                                <img src="/utility.png" alt="" />
+                                <img src="/phone.png" alt="" />
                                 <div className="feature-text">
-                                    <span>Tiện lợi</span>
-                                    <p>Người thuê chịu trách nhiệm</p>
-                                </div>
-                            </div>
-                            <div className="feature">
-                                <img src="/pet.png" alt="" />
-                                <div className="feature-text">
-                                    <span>Thú cưng</span>
-                                    <p>Được phép</p>
-                                </div>
-                            </div>
-                            <div className="feature">
-                                <img src="/fee.png" alt="" />
-                                <div className="feature-text">
-                                    <span>Phí thuê</span>
-                                    <p>
-                                        Hơn 3 lần với khoản thu nhập bình quân
-                                    </p>
+                                    <span>Số điện thoại:</span>
+                                    <p>{postDetails.User?.phone_number}</p>
                                 </div>
                             </div>
                         </div>

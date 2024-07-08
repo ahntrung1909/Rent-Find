@@ -1,0 +1,11 @@
+.container {
+    width: 1260px;
+    padding: 20px 30px;
+    margin: 0 auto;
+    border-radius: 5px;
+    .list {
+        display: flex;
+        gap: 20px;
+        flex-direction: column;
+    }
+}

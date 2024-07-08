@@ -2,6 +2,11 @@ import "./list.scss";
 import React, { useState, useEffect } from "react";
 import Card from "../Card/card.jsx";
 import axios from "axios";
+import { Pagination } from "antd";
+const onShowSizeChange = (current, pageSize) => {
+    console.log(current, pageSize);
+};
+
 function List(props) {
     const { listPost, type, handleShowPost, handleHiddenPost } = props;
     return (
@@ -15,6 +20,12 @@ function List(props) {
                     handleHiddenPost={handleHiddenPost}
                 ></Card>
             ))}
+            <Pagination
+                style={{ textAlign: "center", marginTop: 24 }}
+                showSizeChanger
+                onShowSizeChange={onShowSizeChange}
+                total={500}
+            />
         </div>
     );
 }

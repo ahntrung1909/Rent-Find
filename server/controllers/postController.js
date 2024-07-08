@@ -20,17 +20,17 @@ const PostController = {
             district,
             postDescription,
             price,
+            type,
             title,
             ward,
             images,
         } = req.body;
-        // const thumbUrls = image.map((item) => item.thumbUrl);
-        // console.log("thumbUrls: " + thumbUrls);
+        console.log(req.body);
 
         try {
             await Addresses.create({
                 id: newId1,
-                description: description,
+                description,
                 district,
                 ward,
                 city,
@@ -40,8 +40,9 @@ const PostController = {
                 await Posts.create({
                     id: newId2,
                     description: postDescription,
-                    price: price,
-                    title: title,
+                    price,
+                    title,
+                    type: type,
                     post_address_id: newId1,
                     user_id: currentUserId,
                 });
@@ -51,7 +52,7 @@ const PostController = {
                 const result = await cloudinary.uploader.upload(img.thumbUrl, {
                     folder: "rent-find",
                 });
-                console.log("result: ", result.secure_url);
+                // console.log("result: ", result.secure_url);
 
                 await ImgPost.create({
                     id: img.uid,
@@ -73,6 +74,26 @@ const PostController = {
         try {
             const allPosts = await Posts.findAll({ where: { status: "true" } });
             return res.json(allPosts);
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    getRentPosts: async (req, res) => {
+        try {
+            const rentPosts = await Posts.findAll({
+                where: { status: "true", type: "rent" },
+            });
+            return res.json(rentPosts);
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    getLeasePosts: async (req, res) => {
+        try {
+            const leasePosts = await Posts.findAll({
+                where: { status: "true", type: "lease" },
+            });
+            return res.json(leasePosts);
         } catch (error) {
             res.status(500).json({ errors: error.message });
         }
@@ -133,6 +154,7 @@ const PostController = {
         try {
             const { title, price, city, district, ward } = req.body;
             const postConditions = {};
+
             // Điều kiện tìm kiếm cho bảng Posts
             if (title) {
                 postConditions.title =
@@ -204,7 +226,7 @@ const PostController = {
                     },
                     {
                         model: User,
-                        attributes: ["id", "full_name"],
+                        attributes: ["id", "full_name", "phone_number"],
                     },
                     {
                         model: ImgPost,
@@ -222,7 +244,7 @@ const PostController = {
 
 module.exports = PostController;
 
-// for (const uid of uids) {
+// for (const uid of uids)
 //     for (const thumbUrl of thumbUrls) {
 //         const urlImg = thumbUrl.substring(97, 20);
 //         ImgPost.create({

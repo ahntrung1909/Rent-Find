@@ -14,6 +14,8 @@ import LikedPosts from "../pages/likedPosts/LikedPosts";
 import AboutUs from "../pages/aboutUs/AboutUs";
 import MyPosts from "../pages/myPosts/MyPosts";
 import HiddenPosts from "../pages/hiddenPosts/HiddenPosts";
+import LeasePage from "../pages/leasePage/LeasePage";
+import RentPage from "../pages/rentPage/RentPage";
 
 export const routers = createBrowserRouter([
     {
@@ -28,6 +30,14 @@ export const routers = createBrowserRouter([
             {
                 path: "/",
                 element: <HomePage />,
+            },
+            {
+                path: "/rent",
+                element: <RentPage />,
+            },
+            {
+                path: "/lease",
+                element: <LeasePage />,
             },
             {
                 path: "/login",

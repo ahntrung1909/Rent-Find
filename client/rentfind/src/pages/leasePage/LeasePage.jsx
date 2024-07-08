@@ -5,12 +5,11 @@ import {
     ProForm,
     ProFormText,
 } from "@ant-design/pro-components";
-import "./homePage.scss";
 import axios from "axios";
-
-export default function HomePage() {
-    const [homePagePosts, setHomePagePosts] = useState([]);
-    const [typePost, setTypePost] = useState("HOME_PAGE");
+import "./leasePage.scss";
+function LeasePage() {
+    const [leasePagePosts, setLeasePagePosts] = useState([]);
+    const [typePost, setTypePost] = useState("LEASE");
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
@@ -74,16 +73,16 @@ export default function HomePage() {
     const fetchData = async () => {
         try {
             const response = await axios.get(
-                "http://localhost:3000/api/post/get-posts"
+                "http://localhost:3000/api/post/get-lease-posts"
             );
             const data = await response.data;
             // console.log(data);
 
-            const detailedPostsPromises = data.map(async (homePagePosts) => {
+            const detailedPostsPromises = data.map(async (leasePagePosts) => {
                 let userResponse;
                 try {
                     userResponse = await axios.get(
-                        `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
+                        `http://localhost:3000/api/user/user-information/${leasePagePosts.user_id}`
                     );
                 } catch (error) {
                     if (error.response && error.response.status === 404) {
@@ -94,16 +93,16 @@ export default function HomePage() {
                     }
                 }
                 // const userResponse = await axios.get(
-                //     `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
+                //     `http://localhost:3000/api/user/user-information/${leasePagePosts.user_id}`
                 // );
                 const addressResponse = await axios.get(
-                    `http://localhost:3000/api/addresses/address-information/${homePagePosts.post_address_id}`
+                    `http://localhost:3000/api/addresses/address-information/${leasePagePosts.post_address_id}`
                 );
 
                 let imgPostResponse;
                 try {
                     imgPostResponse = await axios.get(
-                        `http://localhost:3000/api/img-post/img/${homePagePosts.id}`
+                        `http://localhost:3000/api/img-post/img/${leasePagePosts.id}`
                     );
                 } catch (error) {
                     if (error.response && error.response.status === 404) {
@@ -115,7 +114,7 @@ export default function HomePage() {
                 }
 
                 return {
-                    ...homePagePosts,
+                    ...leasePagePosts,
                     User: userResponse.data,
                     Address: addressResponse.data,
                     ImgPost: imgPostResponse.data,
@@ -124,7 +123,7 @@ export default function HomePage() {
 
             const detailedPosts = await Promise.all(detailedPostsPromises);
             console.log(detailedPosts);
-            setHomePagePosts(detailedPosts);
+            setLeasePagePosts(detailedPosts);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -139,8 +138,8 @@ export default function HomePage() {
             <h1 style={{ marginBottom: "50px" }}>Tìm kiếm chỗ thuê ưng ý</h1>
             <div className="content">
                 <div className="left">
-                    {homePagePosts.length > 0 ? (
-                        <List listPost={homePagePosts} type={typePost} />
+                    {leasePagePosts.length > 0 ? (
+                        <List listPost={leasePagePosts} type={typePost} />
                     ) : (
                         <>
                             <p>Không tìm thấy dữ liệu!</p>
@@ -178,7 +177,7 @@ export default function HomePage() {
                             //     );
                             //     return;
                             // }
-                            setHomePagePosts(data);
+                            setLeasePagePosts(data);
                         }}
                     >
                         <ProFormText
@@ -260,3 +259,5 @@ export default function HomePage() {
         </div>
     );
 }
+
+export default LeasePage;

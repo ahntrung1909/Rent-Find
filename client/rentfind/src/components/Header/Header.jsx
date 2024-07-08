@@ -90,6 +90,8 @@ export default function Header() {
                     </Link>
                     <Flex align="center" gap="30px">
                         <Link to="/">Trang chủ</Link>
+                        <Link to="/rent">Thuê</Link>
+                        <Link to="/lease">Cho Thuê</Link>
                         <Link to="/upload-post">Đăng bài</Link>
                         <Link to="/about-us">Về chúng tôi</Link>
                         {user ? (

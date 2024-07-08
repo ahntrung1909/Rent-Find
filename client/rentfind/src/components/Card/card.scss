@@ -3,7 +3,14 @@
 .card {
     display: flex;
     gap: 20px;
-
+    // &.rent {
+    //     display: flex;
+    //     gap: 20px;
+    //     padding: 20px;
+    //     background-color: rgb(237, 236, 236);
+    //     margin-right: 100px;
+    //     border-radius: 10px;
+    // }
     .image-container {
         flex: 2;
         height: 200px;
