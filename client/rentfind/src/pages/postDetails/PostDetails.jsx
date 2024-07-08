@@ -54,7 +54,7 @@ export default function PostDetails() {
                 });
             }
 
-            console.log(imgList);
+            // console.log(imgList);
             const postDetailsFull = {
                 ...data,
                 User: userResponse.data,
