@@ -54,7 +54,7 @@ function HiddenPosts() {
                 ...hiddenPosts,
                 User: userResponse.data,
                 Address: addressResponse.data,
-                ImgPost: imgPostResponse.data,
+                ImgPosts: imgPostResponse.data,
             };
         });
 

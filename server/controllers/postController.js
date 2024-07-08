@@ -42,6 +42,7 @@ const PostController = {
                     description: postDescription,
                     price,
                     title,
+                    status: "true", //về sau làm duyệt thì sẽ là false
                     type: type,
                     post_address_id: newId1,
                     user_id: currentUserId,
@@ -126,7 +127,7 @@ const PostController = {
         try {
             const postId = req.params.id;
             const hiddenPost = await Posts.findAll({
-                where: { user_id: postId, status: "false" },
+                where: { user_id: postId, status: "hidden" },
             });
 
             //tìm cả user và address luôn ở đây
@@ -230,7 +231,7 @@ const PostController = {
                     },
                     {
                         model: ImgPost,
-                        attributes: ["id", "public_id"],
+                        attributes: ["id", "img_url"],
                     },
                 ],
             });

@@ -118,7 +118,7 @@ export default function HomePage() {
                     ...homePagePosts,
                     User: userResponse.data,
                     Address: addressResponse.data,
-                    ImgPost: imgPostResponse.data,
+                    ImgPosts: imgPostResponse.data,
                 };
             });
 

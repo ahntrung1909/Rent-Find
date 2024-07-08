@@ -14,7 +14,7 @@ function MyPosts() {
         const res = await axios.post(
             `http://localhost:3000/api/post/update-post/${id}`,
             {
-                status: false,
+                status: "hidden",
             }
         );
         if (res.status === 200) {
@@ -55,7 +55,7 @@ function MyPosts() {
                 ...myPosts,
                 User: userResponse.data,
                 Address: addressResponse.data,
-                ImgPost: imgPostResponse.data,
+                ImgPosts: imgPostResponse.data,
             };
         });
 

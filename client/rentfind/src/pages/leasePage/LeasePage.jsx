@@ -117,7 +117,7 @@ function LeasePage() {
                     ...leasePagePosts,
                     User: userResponse.data,
                     Address: addressResponse.data,
-                    ImgPost: imgPostResponse.data,
+                    ImgPosts: imgPostResponse.data,
                 };
             });
 
