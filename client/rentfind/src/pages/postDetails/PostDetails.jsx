@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { singlePostData, userData } from "../../lib/dummydata.js";
 import Slider from "../../components/Slider/slider.jsx";
 import "./postDetails.scss";
@@ -108,10 +108,15 @@ export default function PostDetails() {
                         <div className="list-vertical">
                             <div className="feature">
                                 <img src="/user.jpg" alt="" />
-                                <span>{postDetails.User?.full_name}</span>
+                                <Link
+                                    to={`/user-information/${postDetails.user_id}`}
+                                >
+                                    {postDetails.User?.full_name}
+                                </Link>
+                                {/* <span>{postDetails.User?.full_name}</span> */}
                             </div>
                             <div className="feature">
-                                <img src="/phone.png" alt="" />
+                                <img src="/phone.jpg" alt="" />
                                 <div className="feature-text">
                                     <span>Số điện thoại:</span>
                                     <p>{postDetails.User?.phone_number}</p>
