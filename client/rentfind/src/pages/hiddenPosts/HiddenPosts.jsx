@@ -21,59 +21,82 @@ function HiddenPosts() {
         }
         fetchData();
     };
-    const fetchData = async () => {
-        //sửa lại theo cách Trưởng, xử lý ở be
-        const response = await axios.get(
-            `http://localhost:3000/api/post/get-my-hidden-posts/${params.id}`
-        );
-        const data = await response.data;
-
-        const detailedPostsPromises = data.map(async (hiddenPosts) => {
-            const userResponse = await axios.get(
-                `http://localhost:3000/api/user/user-information/${hiddenPosts.user_id}`
-            );
-            const addressResponse = await axios.get(
-                `http://localhost:3000/api/addresses/address-information/${hiddenPosts.post_address_id}`
-            );
-
-            let imgPostResponse;
-            try {
-                imgPostResponse = await axios.get(
-                    `http://localhost:3000/api/img-post/img/${hiddenPosts.id}`
-                );
-            } catch (error) {
-                if (error.response && error.response.status === 404) {
-                    console.log("Image post not found, skipping...");
-                    imgPostResponse = { data: null };
-                } else {
-                    throw error;
+    const fetchData = async (page = 1, limit = 2) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:3000/api/post/get-my-hidden-posts/${params.id}`,
+                {
+                    params: {
+                        page,
+                        limit,
+                    },
                 }
-            }
+            );
 
-            return {
-                ...hiddenPosts,
-                User: userResponse.data,
-                Address: addressResponse.data,
-                ImgPosts: imgPostResponse.data,
-            };
-        });
+            const { posts, totalPosts, totalPages, currentPage } =
+                response.data;
 
-        const detailedPosts = await Promise.all(detailedPostsPromises);
-        setHiddenPosts(detailedPosts);
+            const detailedPostsPromises = posts.map(async (hiddenPosts) => {
+                const userResponse = await axios.get(
+                    `http://localhost:3000/api/user/user-information/${hiddenPosts.user_id}`
+                );
+                const addressResponse = await axios.get(
+                    `http://localhost:3000/api/addresses/address-information/${hiddenPosts.post_address_id}`
+                );
+
+                let imgPostResponse;
+                try {
+                    imgPostResponse = await axios.get(
+                        `http://localhost:3000/api/img-post/img/${hiddenPosts.id}`
+                    );
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        console.log("Image post not found, skipping...");
+                        imgPostResponse = { data: null };
+                    } else {
+                        throw error;
+                    }
+                }
+
+                return {
+                    ...hiddenPosts,
+                    User: userResponse.data,
+                    Address: addressResponse.data,
+                    ImgPosts: imgPostResponse.data,
+                };
+            });
+
+            const detailedPosts = await Promise.all(detailedPostsPromises);
+            console.log(detailedPosts);
+            setHiddenPosts({
+                posts: detailedPosts,
+                totalPosts,
+                totalPages,
+                currentPage,
+            });
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
     };
 
     useEffect(() => {
         fetchData();
     }, []);
 
+    const handlePageChange = (page, pageSize) => {
+        fetchData(page, pageSize);
+    };
+
     console.log(hiddenPosts);
     return (
         <div className="container">
             <h1 style={{ marginBottom: "25px" }}>Bài viết đã ẩn</h1>
             <div className="list">
-                {hiddenPosts.length > 0 ? (
+                {hiddenPosts.posts && hiddenPosts.posts.length > 0 ? (
                     <List
+                        fetchData={fetchData}
                         listPost={hiddenPosts}
+                        handlePageChange={handlePageChange}
                         type={typePost}
                         handleShowPost={handleShowPost}
                     />

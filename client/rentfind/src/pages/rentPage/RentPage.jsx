@@ -7,6 +7,7 @@ import {
 } from "@ant-design/pro-components";
 import axios from "axios";
 import "./rentPage.scss";
+import { message } from "antd";
 
 function RentPage() {
     const [rentPagePosts, setRentPagePosts] = useState([]);
@@ -71,15 +72,22 @@ function RentPage() {
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1, limit = 2) => {
         try {
             const response = await axios.get(
-                "http://localhost:3000/api/post/get-rent-posts"
+                "http://localhost:3000/api/post/get-rent-posts",
+                {
+                    params: {
+                        page,
+                        limit,
+                    },
+                }
             );
-            const data = await response.data;
-            // console.log(data);
 
-            const detailedPostsPromises = data.map(async (rentPagePosts) => {
+            const { posts, totalPosts, totalPages, currentPage } =
+                response.data;
+
+            const detailedPostsPromises = posts.map(async (rentPagePosts) => {
                 let userResponse;
                 try {
                     userResponse = await axios.get(
@@ -93,9 +101,6 @@ function RentPage() {
                         throw error;
                     }
                 }
-                // const userResponse = await axios.get(
-                //     `http://localhost:3000/api/user/user-information/${rentPagePosts.user_id}`
-                // );
                 const addressResponse = await axios.get(
                     `http://localhost:3000/api/addresses/address-information/${rentPagePosts.post_address_id}`
                 );
@@ -124,7 +129,12 @@ function RentPage() {
 
             const detailedPosts = await Promise.all(detailedPostsPromises);
             console.log(detailedPosts);
-            setRentPagePosts(detailedPosts);
+            setRentPagePosts({
+                posts: detailedPosts,
+                totalPosts,
+                totalPages,
+                currentPage,
+            });
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -134,16 +144,28 @@ function RentPage() {
         fetchData();
     }, []);
 
+    const handlePageChange = (page, pageSize) => {
+        fetchData(page, pageSize);
+    };
+
     return (
         <div className="container" style={{ marginBottom: "50px" }}>
             <h1 style={{ marginBottom: "50px" }}>Tìm kiếm chỗ thuê ưng ý</h1>
             <div className="content">
                 <div className="left">
-                    {rentPagePosts.length > 0 ? (
-                        <List listPost={rentPagePosts} type={typePost} />
+                    {rentPagePosts.posts && rentPagePosts.posts.length > 0 ? (
+                        <List
+                            fetchData={fetchData}
+                            listPost={rentPagePosts}
+                            type={typePost}
+                            handlePageChange={handlePageChange}
+                        />
                     ) : (
                         <>
-                            <p>Không tìm thấy dữ liệu!</p>
+                            <p>Không tìm thấy dữ liệu!</p> <br></br>
+                            <a style={{ color: "blue" }} href="/">
+                                Quay lại trang chủ
+                            </a>
                         </>
                     )}
                 </div>
@@ -168,17 +190,25 @@ function RentPage() {
                             console.log(values);
                             const response = await axios.post(
                                 `http://localhost:3000/api/post/search`,
-                                values
+                                { ...values, page: 1, limit: 2 }
                             );
-                            const data = await response.data;
-                            console.log(data);
-                            // if (data.length === 0) {
-                            //     message.info(
-                            //         "Không có dữ liệu tìm kiếm!"
-                            //     );
+                            const {
+                                posts,
+                                totalPosts,
+                                totalPages,
+                                currentPage,
+                            } = response.data;
+                            console.log(response.data);
+                            // if (posts.length === 0) {
+                            //     message.info("Không có dữ liệu tìm kiếm!");
                             //     return;
                             // }
-                            setRentPagePosts(data);
+                            setRentPagePosts({
+                                posts,
+                                totalPosts,
+                                totalPages,
+                                currentPage,
+                            });
                         }}
                     >
                         <ProFormText

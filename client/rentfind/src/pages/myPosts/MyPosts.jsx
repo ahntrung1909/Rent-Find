@@ -22,59 +22,82 @@ function MyPosts() {
         }
         fetchData();
     };
-    const fetchData = async () => {
-        //sửa lại theo cách Trưởng, xử lý ở be
-        const response = await axios.get(
-            `http://localhost:3000/api/post/get-my-posts/${params.id}`
-        );
-        const data = await response.data;
-
-        const detailedPostsPromises = data.map(async (myPosts) => {
-            const userResponse = await axios.get(
-                `http://localhost:3000/api/user/user-information/${myPosts.user_id}`
-            );
-            const addressResponse = await axios.get(
-                `http://localhost:3000/api/addresses/address-information/${myPosts.post_address_id}`
-            );
-
-            let imgPostResponse;
-            try {
-                imgPostResponse = await axios.get(
-                    `http://localhost:3000/api/img-post/img/${myPosts.id}`
-                );
-            } catch (error) {
-                if (error.response && error.response.status === 404) {
-                    console.log("Image post not found, skipping...");
-                    imgPostResponse = { data: null };
-                } else {
-                    throw error;
+    const fetchData = async (page = 1, limit = 2) => {
+        try {
+            const response = await axios.get(
+                `http://localhost:3000/api/post/get-my-posts/${params.id}`,
+                {
+                    params: {
+                        page,
+                        limit,
+                    },
                 }
-            }
+            );
 
-            return {
-                ...myPosts,
-                User: userResponse.data,
-                Address: addressResponse.data,
-                ImgPosts: imgPostResponse.data,
-            };
-        });
+            const { posts, totalPosts, totalPages, currentPage } =
+                response.data;
 
-        const detailedPosts = await Promise.all(detailedPostsPromises);
-        setMyPosts(detailedPosts);
+            const detailedPostsPromises = posts.map(async (myPosts) => {
+                const userResponse = await axios.get(
+                    `http://localhost:3000/api/user/user-information/${myPosts.user_id}`
+                );
+                const addressResponse = await axios.get(
+                    `http://localhost:3000/api/addresses/address-information/${myPosts.post_address_id}`
+                );
+
+                let imgPostResponse;
+                try {
+                    imgPostResponse = await axios.get(
+                        `http://localhost:3000/api/img-post/img/${myPosts.id}`
+                    );
+                } catch (error) {
+                    if (error.response && error.response.status === 404) {
+                        console.log("Image post not found, skipping...");
+                        imgPostResponse = { data: null };
+                    } else {
+                        throw error;
+                    }
+                }
+
+                return {
+                    ...myPosts,
+                    User: userResponse.data,
+                    Address: addressResponse.data,
+                    ImgPosts: imgPostResponse.data,
+                };
+            });
+
+            const detailedPosts = await Promise.all(detailedPostsPromises);
+            console.log(detailedPosts);
+            setMyPosts({
+                posts: detailedPosts,
+                totalPosts,
+                totalPages,
+                currentPage,
+            });
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
     };
+
     useEffect(() => {
         fetchData();
     }, []);
 
+    const handlePageChange = (page, pageSize) => {
+        fetchData(page, pageSize);
+    };
     return (
         <div className="container">
             <h1 style={{ marginBottom: "25px" }}>Bài viết của tôi</h1>
             <div className="list">
-                {myPosts.length > 0 ? (
+                {myPosts.posts && myPosts.posts.length > 0 ? (
                     <List
+                        fetchData={fetchData}
                         listPost={myPosts}
                         type={typePost}
                         handleHiddenPost={handleHiddenPost}
+                        handlePageChange={handlePageChange}
                     />
                 ) : (
                     <>

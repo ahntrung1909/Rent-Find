@@ -259,7 +259,7 @@ export default function Profile() {
                         value: district.district_name,
                     }))}
                     onChange={handleDistrictChange}
-                    disabled={!districts.length || isDisabled} //kiểm tra lại
+                    disabled={!districts.length || isDisabled}
                     rules={[
                         { required: true, message: "Vui lòng chọn quận/huyện" },
                     ]}

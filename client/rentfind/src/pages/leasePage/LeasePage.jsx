@@ -6,6 +6,7 @@ import {
     ProFormText,
 } from "@ant-design/pro-components";
 import axios from "axios";
+import { message } from "antd";
 import "./leasePage.scss";
 function LeasePage() {
     const [leasePagePosts, setLeasePagePosts] = useState([]);
@@ -70,15 +71,22 @@ function LeasePage() {
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1, limit = 2) => {
         try {
             const response = await axios.get(
-                "http://localhost:3000/api/post/get-lease-posts"
+                "http://localhost:3000/api/post/get-lease-posts",
+                {
+                    params: {
+                        page,
+                        limit,
+                    },
+                }
             );
-            const data = await response.data;
-            // console.log(data);
 
-            const detailedPostsPromises = data.map(async (leasePagePosts) => {
+            const { posts, totalPosts, totalPages, currentPage } =
+                response.data;
+
+            const detailedPostsPromises = posts.map(async (leasePagePosts) => {
                 let userResponse;
                 try {
                     userResponse = await axios.get(
@@ -92,9 +100,7 @@ function LeasePage() {
                         throw error;
                     }
                 }
-                // const userResponse = await axios.get(
-                //     `http://localhost:3000/api/user/user-information/${leasePagePosts.user_id}`
-                // );
+
                 const addressResponse = await axios.get(
                     `http://localhost:3000/api/addresses/address-information/${leasePagePosts.post_address_id}`
                 );
@@ -123,7 +129,12 @@ function LeasePage() {
 
             const detailedPosts = await Promise.all(detailedPostsPromises);
             console.log(detailedPosts);
-            setLeasePagePosts(detailedPosts);
+            setLeasePagePosts({
+                posts: detailedPosts,
+                totalPosts,
+                totalPages,
+                currentPage,
+            });
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -133,16 +144,28 @@ function LeasePage() {
         fetchData();
     }, []);
 
+    const handlePageChange = (page, pageSize) => {
+        fetchData(page, pageSize);
+    };
+
     return (
         <div className="container" style={{ marginBottom: "50px" }}>
             <h1 style={{ marginBottom: "50px" }}>Tìm kiếm chỗ thuê ưng ý</h1>
             <div className="content">
                 <div className="left">
-                    {leasePagePosts.length > 0 ? (
-                        <List listPost={leasePagePosts} type={typePost} />
+                    {leasePagePosts.posts && leasePagePosts.posts.length > 0 ? (
+                        <List
+                            fetchData={fetchData}
+                            listPost={leasePagePosts}
+                            type={typePost}
+                            handlePageChange={handlePageChange}
+                        />
                     ) : (
                         <>
-                            <p>Không tìm thấy dữ liệu!</p>
+                            <p>Không tìm thấy dữ liệu!</p> <br></br>
+                            <a style={{ color: "blue" }} href="/">
+                                Quay lại trang chủ
+                            </a>
                         </>
                     )}
                 </div>
@@ -167,17 +190,25 @@ function LeasePage() {
                             console.log(values);
                             const response = await axios.post(
                                 `http://localhost:3000/api/post/search`,
-                                values
+                                { ...values, page: 1, limit: 2 }
                             );
-                            const data = await response.data;
-                            console.log(data);
-                            // if (data.length === 0) {
-                            //     message.info(
-                            //         "Không có dữ liệu tìm kiếm!"
-                            //     );
+                            const {
+                                posts,
+                                totalPosts,
+                                totalPages,
+                                currentPage,
+                            } = response.data;
+                            console.log(response.data);
+                            // if (posts.length === 0) {
+                            //     message.info("Không có dữ liệu tìm kiếm!");
                             //     return;
                             // }
-                            setLeasePagePosts(data);
+                            setLeasePagePosts({
+                                posts,
+                                totalPosts,
+                                totalPages,
+                                currentPage,
+                            });
                         }}
                     >
                         <ProFormText

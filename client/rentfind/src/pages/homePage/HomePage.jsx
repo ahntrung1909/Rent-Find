@@ -7,6 +7,7 @@ import {
 } from "@ant-design/pro-components";
 import "./homePage.scss";
 import axios from "axios";
+import { message } from "antd";
 
 export default function HomePage() {
     const [homePagePosts, setHomePagePosts] = useState([]);
@@ -71,19 +72,26 @@ export default function HomePage() {
         }
     };
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1, limit = 2) => {
         try {
             const response = await axios.get(
-                "http://localhost:3000/api/post/get-posts"
+                "http://localhost:3000/api/post/get-posts",
+                {
+                    params: {
+                        page,
+                        limit,
+                    },
+                }
             );
-            const data = await response.data;
-            // console.log(data);
 
-            const detailedPostsPromises = data.map(async (homePagePosts) => {
+            const { posts, totalPosts, totalPages, currentPage } =
+                response.data;
+
+            const detailedPostsPromises = posts.map(async (homePagePost) => {
                 let userResponse;
                 try {
                     userResponse = await axios.get(
-                        `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
+                        `http://localhost:3000/api/user/user-information/${homePagePost.user_id}`
                     );
                 } catch (error) {
                     if (error.response && error.response.status === 404) {
@@ -93,17 +101,15 @@ export default function HomePage() {
                         throw error;
                     }
                 }
-                // const userResponse = await axios.get(
-                //     `http://localhost:3000/api/user/user-information/${homePagePosts.user_id}`
-                // );
+
                 const addressResponse = await axios.get(
-                    `http://localhost:3000/api/addresses/address-information/${homePagePosts.post_address_id}`
+                    `http://localhost:3000/api/addresses/address-information/${homePagePost.post_address_id}`
                 );
 
                 let imgPostResponse;
                 try {
                     imgPostResponse = await axios.get(
-                        `http://localhost:3000/api/img-post/img/${homePagePosts.id}`
+                        `http://localhost:3000/api/img-post/img/${homePagePost.id}`
                     );
                 } catch (error) {
                     if (error.response && error.response.status === 404) {
@@ -115,7 +121,7 @@ export default function HomePage() {
                 }
 
                 return {
-                    ...homePagePosts,
+                    ...homePagePost,
                     User: userResponse.data,
                     Address: addressResponse.data,
                     ImgPosts: imgPostResponse.data,
@@ -123,8 +129,13 @@ export default function HomePage() {
             });
 
             const detailedPosts = await Promise.all(detailedPostsPromises);
-            console.log(detailedPosts);
-            setHomePagePosts(detailedPosts);
+            // console.log(detailedPosts);
+            setHomePagePosts({
+                posts: detailedPosts,
+                totalPosts,
+                totalPages,
+                currentPage,
+            });
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -133,17 +144,29 @@ export default function HomePage() {
     useEffect(() => {
         fetchData();
     }, []);
+    console.log(homePagePosts);
+    const handlePageChange = (page, pageSize) => {
+        fetchData(page, pageSize);
+    };
 
     return (
         <div className="container" style={{ marginBottom: "50px" }}>
             <h1 style={{ marginBottom: "50px" }}>Tìm kiếm chỗ thuê ưng ý</h1>
             <div className="content">
                 <div className="left">
-                    {homePagePosts.length > 0 ? (
-                        <List listPost={homePagePosts} type={typePost} />
+                    {homePagePosts.posts && homePagePosts.posts.length > 0 ? (
+                        <List
+                            fetchData={fetchData}
+                            listPost={homePagePosts}
+                            handlePageChange={handlePageChange}
+                            type={typePost}
+                        />
                     ) : (
                         <>
-                            <p>Không tìm thấy dữ liệu!</p>
+                            <p>Không tìm thấy dữ liệu!</p> <br></br>
+                            <a style={{ color: "blue" }} href="/">
+                                Quay lại trang chủ
+                            </a>
                         </>
                     )}
                 </div>
@@ -168,17 +191,25 @@ export default function HomePage() {
                             console.log(values);
                             const response = await axios.post(
                                 `http://localhost:3000/api/post/search`,
-                                values
+                                { ...values, page: 1, limit: 2 }
                             );
-                            const data = await response.data;
-                            console.log(data);
-                            // if (data.length === 0) {
-                            //     message.info(
-                            //         "Không có dữ liệu tìm kiếm!"
-                            //     );
+                            const {
+                                posts,
+                                totalPosts,
+                                totalPages,
+                                currentPage,
+                            } = response.data;
+                            console.log(response.data);
+                            // if (posts.length === 0) {
+                            //     message.info("Không có dữ liệu tìm kiếm!");
                             //     return;
                             // }
-                            setHomePagePosts(data);
+                            setHomePagePosts({
+                                posts,
+                                totalPosts,
+                                totalPages,
+                                currentPage,
+                            });
                         }}
                     >
                         <ProFormText

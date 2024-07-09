@@ -13,6 +13,7 @@ function Card(props) {
         return item.image;
         // console.log(imgListData);
     });
+    const postId = item.id;
 
     const [liked, setLiked] = useState(false);
     const handleLiked = async () => {
@@ -63,6 +64,7 @@ function Card(props) {
                     )}
                     {(type === "HOME_PAGE" ||
                         type === "RENT" ||
+                        type === "LIKED_PAGE" ||
                         type === "LEASE") && (
                         <div
                             onClick={() => setIsModalOpen(true)}
@@ -95,7 +97,7 @@ function Card(props) {
                         </Link>
                     </div>
                     <div className="icons">
-                        {liked ? (
+                        {/* {liked ? (
                             <div
                                 onClick={() => handleLiked()}
                                 className="icon heart"
@@ -108,7 +110,7 @@ function Card(props) {
                                 <img src="/heart.png" alt="" />
                                 <p>Thích bài viết</p>
                             </div>
-                        )}
+                        )} */}
                         <div className="icon">
                             <img src="/chat.png" alt="" />
                             <p>Nhắn tin</p>
