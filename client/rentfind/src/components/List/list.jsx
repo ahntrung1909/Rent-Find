@@ -28,12 +28,12 @@ function List(props) {
                 ></Card>
             ))}
             <Pagination
-                total={20}
+                total={50}
                 style={{ textAlign: "center", marginTop: 24 }}
                 showSizeChanger
                 onShowSizeChange={handlePageChange}
                 onChange={handlePageChange}
-                pageSize={2}
+                pageSize={5}
                 current={listPost.currentPage}
             />
         </div>

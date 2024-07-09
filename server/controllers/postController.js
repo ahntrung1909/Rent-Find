@@ -10,7 +10,7 @@ const ImgPost = model.ImgPost;
 const User = model.User;
 const Sequelize = require("sequelize");
 
-const paginate = (page = 1, limit = 2) => {
+const paginate = (page = 1, limit = 5) => {
     const offset = (page - 1) * limit;
     return {
         limit: parseInt(limit),

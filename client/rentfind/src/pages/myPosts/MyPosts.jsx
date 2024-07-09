@@ -22,7 +22,7 @@ function MyPosts() {
         }
         fetchData();
     };
-    const fetchData = async (page = 1, limit = 2) => {
+    const fetchData = async (page = 1, limit = 5) => {
         try {
             const response = await axios.get(
                 `http://localhost:3000/api/post/get-my-posts/${params.id}`,

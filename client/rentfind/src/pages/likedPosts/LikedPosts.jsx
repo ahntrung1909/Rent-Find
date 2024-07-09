@@ -75,7 +75,7 @@ export default function LikedPage() {
         }
     };
 
-    const fetchData = async (page = 1, limit = 2) => {
+    const fetchData = async (page = 1, limit = 5) => {
         try {
             const response = await axios.get(
                 `http://localhost:3000/api/post/get-my-liked-posts/${params.id}`,
@@ -194,7 +194,7 @@ export default function LikedPage() {
                             console.log(values);
                             const response = await axios.post(
                                 `http://localhost:3000/api/post/search`,
-                                { ...values, page: 1, limit: 2 }
+                                { ...values, page: 1, limit: 5 }
                             );
                             const {
                                 posts,
