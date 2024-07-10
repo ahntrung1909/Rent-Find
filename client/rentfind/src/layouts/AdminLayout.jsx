@@ -1,5 +1,6 @@
 import { Outlet, useRouteError } from "react-router-dom";
 import Footer from "../components/Footer/Footer";
+import Statistics from "../components/Statistics/Statistics";
 import ErrorPage from "../ErrorPage";
 import React, { useEffect } from "react";
 import "./adminLayout.scss";
@@ -39,6 +40,7 @@ export default function AdminLayout() {
             <AdminHeader />
             <main>
                 <ErrorBoundary>
+                    <Statistics />
                     <Outlet />
                 </ErrorBoundary>
             </main>

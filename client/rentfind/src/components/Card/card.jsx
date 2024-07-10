@@ -76,7 +76,11 @@ function Card(props) {
                         {item.Address.district},<br></br> {item.Address.city}
                     </span>
                 </p>
-                <p className="price">{item?.price} vnd/tháng</p>
+                {item.price ? (
+                    <p className="price">{item?.price} vnd/tháng</p>
+                ) : (
+                    <></>
+                )}
                 <div className="bottom">
                     <div className="user">
                         <Link to={`/user-information/${item.User.id}`}>

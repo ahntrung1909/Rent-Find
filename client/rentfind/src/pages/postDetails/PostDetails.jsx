@@ -149,9 +149,13 @@ export default function PostDetails() {
                                             {postDetails.Address?.city}
                                         </span>
                                     </div>
-                                    <div className="price">
-                                        {postDetails.price}vnd/tháng
-                                    </div>
+                                    {postDetails.price ? (
+                                        <div className="price">
+                                            {postDetails.price}vnd/tháng
+                                        </div>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </div>
                             </div>
 
