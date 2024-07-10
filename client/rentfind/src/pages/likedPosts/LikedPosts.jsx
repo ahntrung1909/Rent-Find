@@ -86,59 +86,19 @@ export default function LikedPage() {
                     },
                 }
             );
+            const { totalPosts, totalPages, currentPage } = response.data;
+
             console.log(response.data);
-            // const { posts, totalPosts, totalPages, currentPage } =
-            //     response.data;
-
-            // const detailedPostsPromises = posts.map(async (homePagePost) => {
-            //     let userResponse;
-            //     try {
-            //         userResponse = await axios.get(
-            //             `http://localhost:3000/api/user/user-information/${homePagePost.user_id}`
-            //         );
-            //     } catch (error) {
-            //         if (error.response && error.response.status === 404) {
-            //             console.log("Image post not found, skipping...");
-            //             userResponse = { data: null };
-            //         } else {
-            //             throw error;
-            //         }
-            //     }
-
-            //     const addressResponse = await axios.get(
-            //         `http://localhost:3000/api/addresses/address-information/${homePagePost.post_address_id}`
-            //     );
-
-            //     let imgPostResponse;
-            //     try {
-            //         imgPostResponse = await axios.get(
-            //             `http://localhost:3000/api/img-post/img/${homePagePost.id}`
-            //         );
-            //     } catch (error) {
-            //         if (error.response && error.response.status === 404) {
-            //             console.log("Image post not found, skipping...");
-            //             imgPostResponse = { data: null };
-            //         } else {
-            //             throw error;
-            //         }
-            //     }
-
-            //     return {
-            //         ...homePagePost,
-            //         User: userResponse.data,
-            //         Address: addressResponse.data,
-            //         ImgPosts: imgPostResponse.data,
-            //     };
-            // });
-
-            // const detailedPosts = await Promise.all(detailedPostsPromises);
-            // // console.log(detailedPosts);
-            // setLikedPagePosts({
-            //     posts: detailedPosts,
-            //     totalPosts,
-            //     totalPages,
-            //     currentPage,
-            // });
+            const resData = response.data;
+            const posts = resData.posts.map((item) => {
+                return item.Post;
+            });
+            setLikedPagePosts({
+                posts: posts,
+                totalPosts,
+                totalPages,
+                currentPage,
+            });
         } catch (error) {
             console.error("Error fetching data:", error);
         }

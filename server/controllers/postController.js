@@ -414,6 +414,16 @@ const PostController = {
                                     model: ImgPost,
                                     attributes: ["id", "img_url"],
                                 },
+                                {
+                                    model: Addresses,
+                                    attributes: [
+                                        "id",
+                                        "description",
+                                        "ward",
+                                        "district",
+                                        "city",
+                                    ],
+                                },
                             ],
                         },
                     ],

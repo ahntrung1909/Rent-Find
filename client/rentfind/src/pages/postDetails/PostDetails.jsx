@@ -109,7 +109,6 @@ export default function PostDetails() {
                     userId: user.data.id,
                 }
             );
-            console.log(likeResponse.data);
             setLiked(likeResponse.data.liked);
         }
     };
@@ -118,7 +117,7 @@ export default function PostDetails() {
         fetchData();
     }, [user]);
 
-    console.log(postDetails);
+    // console.log(postDetails);
     return (
         <div className="container">
             <div className="single-page">
@@ -147,7 +146,17 @@ export default function PostDetails() {
                             </div>
 
                             <div className="bottom">
-                                {postDetails.description}
+                                <pre
+                                    style={{
+                                        fontFamily: "inherit",
+                                        fontSize: "inherit",
+                                        fontWeight: "normal",
+                                        color: "black",
+                                        lineHeight: "30px",
+                                    }}
+                                >
+                                    {postDetails.description}
+                                </pre>
                             </div>
                         </div>
                     </div>

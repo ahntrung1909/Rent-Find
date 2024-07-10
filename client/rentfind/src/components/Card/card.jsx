@@ -18,31 +18,12 @@ function Card(props) {
     const [liked, setLiked] = useState(false);
     const handleLiked = async () => {
         setLiked((prev) => !prev);
-
-        // try {
-        //     if (!liked) {
-        //         // Send POST request to create a new like record
-        //         await axios.post("/api/likes", {
-        //             postId: item.id,
-        //             userId: item.User.id,
-        //         });
-        //     } else {
-        //         // Send DELETE request to remove the like record
-        //         await axios.delete(`/api/likes`, {
-        //             data: {
-        //                 postId: item.id,
-        //                 userId: item.User.id,
-        //             },
-        //         });
-        //     }
-        // } catch (error) {
-        //     console.error("Error updating like status:", error);
-        // }
     };
 
     return (
         <div className={type === "RENT" ? "card rent" : "card"}>
             <FormModal
+                item={item}
                 setIsModalOpen={setIsModalOpen}
                 isModalOpen={isModalOpen}
             />
@@ -89,7 +70,7 @@ function Card(props) {
                         {item.Address.district},<br></br> {item.Address.city}
                     </span>
                 </p>
-                <p className="price">{item?.price}vnd/tháng</p>
+                <p className="price">{item?.price} vnd/tháng</p>
                 <div className="bottom">
                     <div className="user">
                         <Link to={`/user-information/${item.User.id}`}>

@@ -1,7 +1,7 @@
 import "./header.scss";
 import { Button, Flex, Dropdown, message, Space } from "antd";
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DownOutlined } from "@ant-design/icons";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atom";
@@ -9,44 +9,57 @@ import { logout } from "../../utils/auth";
 
 export default function Header() {
     const [user, setUser] = useRecoilState(userState);
+    const navigate = useNavigate();
     const onClick = ({ key }) => {
         switch (key) {
             case "1":
                 message.info("Hồ sơ người dùng");
-                setTimeout(() => {
-                    window.location.href = `http://localhost:5173/user-information/${user.data.id}`;
-                }, 750);
+                navigate(`/user-information/${user.data.id}`);
+
+                // setTimeout(() => {
+                //     window.location.href = `http://localhost:5173/user-information/${user.data.id}`;
+                // }, 750);
                 break;
             case "2":
                 message.info("Đổi mật khẩu người dùng");
-                setTimeout(() => {
-                    window.location.href =
-                        "http://localhost:5173/change-password";
-                }, 750);
+                navigate(`/change-password`);
+
+                // setTimeout(() => {
+                //     window.location.href =
+                //         "http://localhost:5173/change-password";
+                // }, 750);
                 break;
             case "3":
                 message.info("Bài viết của bạn");
-                setTimeout(() => {
-                    window.location.href = `http://localhost:5173/my-posts/${user.data.id}`;
-                }, 750);
+                navigate(`/my-posts/${user.data.id}`);
+
+                // setTimeout(() => {
+                //     window.location.href = `http://localhost:5173/my-posts/${user.data.id}`;
+                // }, 750);
                 break;
             case "4":
                 message.info("Những bài viết đã thích của bạn");
-                setTimeout(() => {
-                    window.location.href = `http://localhost:5173/liked-posts/${user.data.id}`;
-                }, 750);
+                navigate(`/liked-posts/${user.data.id}`);
+
+                // setTimeout(() => {
+                //     window.location.href = `http://localhost:5173/liked-posts/${user.data.id}`;
+                // }, 750);
                 break;
             case "5":
                 message.info("Những bài viết đã ẩn của bạn");
-                setTimeout(() => {
-                    window.location.href = `http://localhost:5173/my-hidden-posts/${user.data.id}`;
-                }, 750);
+                navigate(`/my-hidden-posts/${user.data.id}`);
+
+                // setTimeout(() => {
+                //     window.location.href = `http://localhost:5173/my-hidden-posts/${user.data.id}`;
+                // }, 750);
                 break;
             case "6":
-                logout();
                 message.success({
                     message: "Đăng xuất thành công",
                 });
+                logout();
+                // navigate(`/login`);
+
                 setTimeout(() => {
                     window.location.href = "http://localhost:5173/login";
                 }, 1500);

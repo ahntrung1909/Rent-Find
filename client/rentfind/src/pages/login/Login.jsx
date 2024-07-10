@@ -1,5 +1,6 @@
 import React from "react";
 import { LoginForm, ProFormText } from "@ant-design/pro-components";
+import { Link, useNavigate } from "react-router-dom";
 import { Space, message } from "antd";
 import {
     LockOutlined,
@@ -20,6 +21,8 @@ const iconStyles = {
 };
 
 export default function Login() {
+    const navigate = useNavigate();
+
     return (
         <>
             <LoginForm
@@ -52,11 +55,11 @@ export default function Login() {
                                 setAuthToken(accessToken);
                                 if (success) {
                                     message.success("Đăng nhập thành công!");
-
+                                    // navigate(`/`);
                                     setTimeout(() => {
                                         window.location.href =
                                             "http://localhost:5173/";
-                                    }, 1500);
+                                    }, 1000);
                                 }
                             }
                         })

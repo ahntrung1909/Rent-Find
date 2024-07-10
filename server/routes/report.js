@@ -3,6 +3,6 @@ const router = express.Router();
 const { authenticateJWT } = require("../middlewares/auth.middleware");
 const ReportController = require("../controllers/ReportController");
 
-router.post("/upload-report", ReportController.uploadReport);
+router.post("/upload-report", authenticateJWT, ReportController.uploadReport);
 
 module.exports = router;

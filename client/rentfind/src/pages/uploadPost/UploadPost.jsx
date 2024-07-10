@@ -8,6 +8,7 @@ import {
     ProFormText,
     ProFormSelect,
     ProFormUploadButton,
+    ProFormTextArea,
 } from "@ant-design/pro-components";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atom";
@@ -122,10 +123,11 @@ export default function UploadPost() {
                         .then((res) => {
                             if (res.status === 200) {
                                 message.success("Tạo bài viết thành công !");
-                                setTimeout(() => {
-                                    window.location.href =
-                                        "http://localhost:5173/";
-                                }, 1000);
+                                navigate("/");
+                                // setTimeout(() => {
+                                //     window.location.href =
+                                //         "http://localhost:5173/";
+                                // }, 1000);
                             }
                         })
                         .catch((err) => {
@@ -149,7 +151,18 @@ export default function UploadPost() {
                     ]}
                 />
 
-                <ProFormText
+                {/* <ProFormText
+                    name="postDescription"
+                    label="Mô tả bài viết"
+                    placeholder="Nhập mô tả bài viết"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Vui lòng nhập mô tả bài viết",
+                        },
+                    ]}
+                /> */}
+                <ProFormTextArea
                     name="postDescription"
                     label="Mô tả bài viết"
                     placeholder="Nhập mô tả bài viết"

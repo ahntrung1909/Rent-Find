@@ -144,7 +144,7 @@ export default function HomePage() {
     useEffect(() => {
         fetchData();
     }, []);
-    console.log(homePagePosts);
+    // console.log(homePagePosts);
     const handlePageChange = (page, pageSize) => {
         fetchData(page, pageSize);
     };
@@ -188,7 +188,7 @@ export default function HomePage() {
                             resetButtonProps: false,
                         }}
                         onFinish={async (values) => {
-                            console.log(values);
+                            // console.log(values);
                             const response = await axios.post(
                                 `http://localhost:3000/api/post/search`,
                                 { ...values, page: 1, limit: 5 }
@@ -199,7 +199,7 @@ export default function HomePage() {
                                 totalPages,
                                 currentPage,
                             } = response.data;
-                            console.log(response.data);
+                            // console.log(response.data);
                             // if (posts.length === 0) {
                             //     message.info("Không có dữ liệu tìm kiếm!");
                             //     return;
