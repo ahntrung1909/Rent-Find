@@ -163,8 +163,8 @@ function LeasePage() {
                     ) : (
                         <>
                             <p>Không tìm thấy dữ liệu!</p> <br></br>
-                            <a style={{ color: "blue" }} href="/">
-                                Quay lại trang chủ
+                            <a style={{ color: "blue" }} href="/lease">
+                                Quay lại trang Cho thuê
                             </a>
                         </>
                     )}

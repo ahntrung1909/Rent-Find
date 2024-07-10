@@ -59,19 +59,25 @@ const PostController = {
                 });
             }
 
-            for (const img of images) {
-                const result = await cloudinary.uploader.upload(img.thumbUrl, {
-                    folder: "rent-find",
-                });
-                // console.log("result: ", result.secure_url);
+            if (!!images) {
+                for (const img of images) {
+                    const result = await cloudinary.uploader.upload(
+                        img.thumbUrl,
+                        {
+                            folder: "rent-find",
+                        }
+                    );
+                    // console.log("result: ", result.secure_url);
 
-                await ImgPost.create({
-                    id: img.uid,
-                    img_url: result.secure_url,
-                    public_id: result.public_id,
-                    post_id: newId2,
-                });
+                    await ImgPost.create({
+                        id: img.uid,
+                        img_url: result.secure_url,
+                        public_id: result.public_id,
+                        post_id: newId2,
+                    });
+                }
             }
+
             res.status(200).json({
                 message: "Post and address created successfully",
             });

@@ -28,8 +28,14 @@ function Card(props) {
                 isModalOpen={isModalOpen}
             />
             <Link to={`/post/${item.id}`} className="image-container">
-                {/* <img src={imgListData} alt="" /> */}
-                <img src={item.ImgPosts[0].img_url} alt="" />
+                <img
+                    src={
+                        item.ImgPosts[0]?.img_url
+                            ? item.ImgPosts[0]?.img_url
+                            : "/grey-img-3.svg"
+                    }
+                    alt=""
+                />
             </Link>
 
             <div className="text-container">

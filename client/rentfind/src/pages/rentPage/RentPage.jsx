@@ -163,8 +163,8 @@ function RentPage() {
                     ) : (
                         <>
                             <p>Không tìm thấy dữ liệu!</p> <br></br>
-                            <a style={{ color: "blue" }} href="/">
-                                Quay lại trang chủ
+                            <a style={{ color: "blue" }} href="/rent">
+                                Quay lại trang Thuê
                             </a>
                         </>
                     )}

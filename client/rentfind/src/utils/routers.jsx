@@ -16,11 +16,13 @@ import MyPosts from "../pages/myPosts/MyPosts";
 import HiddenPosts from "../pages/hiddenPosts/HiddenPosts";
 import LeasePage from "../pages/leasePage/LeasePage";
 import RentPage from "../pages/rentPage/RentPage";
+import AdminLayout from "../layouts/AdminLayout";
+import OnPending from "../pages/admin/OnPending/OnPending";
+import AllUsers from "../pages/admin/AllUsers/AllUsers";
+import AllReports from "../pages/admin/AllReports/AllReports";
 
 export const routers = createBrowserRouter([
     {
-        path: "/",
-        element: <Layout />,
         errorElement: (
             <Layout>
                 <ErrorPage />
@@ -28,84 +30,110 @@ export const routers = createBrowserRouter([
         ),
         children: [
             {
-                path: "/",
-                element: <HomePage />,
+                element: <Layout />,
+                children: [
+                    {
+                        path: "/",
+                        element: <HomePage />,
+                    },
+                    {
+                        path: "/rent",
+                        element: <RentPage />,
+                    },
+                    {
+                        path: "/lease",
+                        element: <LeasePage />,
+                    },
+                    {
+                        path: "/login",
+                        element: <Login />,
+                    },
+                    {
+                        path: "/register",
+                        element: <Register />,
+                    },
+                    {
+                        path: "/change-password",
+                        element: (
+                            <AuthGuard>
+                                <ChangePassword />,
+                            </AuthGuard>
+                        ),
+                    },
+                    {
+                        path: "/reset-password",
+                        element: <ResetPassword />,
+                    },
+                    {
+                        path: "/user-information/:id",
+                        element: (
+                            <AuthGuard>
+                                <Profile />,
+                            </AuthGuard>
+                        ),
+                    },
+                    {
+                        path: "/upload-post",
+                        element: (
+                            <AuthGuard>
+                                <UploadPost />,
+                            </AuthGuard>
+                        ),
+                    },
+                    {
+                        path: "/post/:id",
+                        element: <PostDetails />,
+                    },
+                    {
+                        path: "/my-posts/:id",
+                        element: (
+                            <AuthGuard>
+                                <MyPosts />
+                            </AuthGuard>
+                        ),
+                    },
+                    {
+                        path: "/my-hidden-posts/:id",
+                        element: (
+                            <AuthGuard>
+                                <HiddenPosts />
+                            </AuthGuard>
+                        ),
+                    },
+                    {
+                        path: "/liked-posts/:id",
+                        element: (
+                            <AuthGuard>
+                                <LikedPosts />
+                            </AuthGuard>
+                        ),
+                    },
+                    {
+                        path: "/about-us",
+                        element: <AboutUs />,
+                    },
+                ],
             },
             {
-                path: "/rent",
-                element: <RentPage />,
-            },
-            {
-                path: "/lease",
-                element: <LeasePage />,
-            },
-            {
-                path: "/login",
-                element: <Login />,
-            },
-            {
-                path: "/register",
-                element: <Register />,
-            },
-            {
-                path: "/change-password",
-                element: (
-                    <AuthGuard>
-                        <ChangePassword />,
-                    </AuthGuard>
-                ),
-            },
-            {
-                path: "/reset-password",
-                element: <ResetPassword />,
-            },
-            {
-                path: "/user-information/:id",
-                element: (
-                    <AuthGuard>
-                        <Profile />,
-                    </AuthGuard>
-                ),
-            },
-            {
-                path: "/upload-post",
-                element: (
-                    <AuthGuard>
-                        <UploadPost />,
-                    </AuthGuard>
-                ),
-            },
-            {
-                path: "/post/:id",
-                element: <PostDetails />,
-            },
-            {
-                path: "/my-posts/:id",
-                element: (
-                    <AuthGuard>
-                        <MyPosts />
-                    </AuthGuard>
-                ),
-            },
-            {
-                path: "/my-hidden-posts/:id",
-                element: (
-                    <AuthGuard>
-                        <HiddenPosts />
-                    </AuthGuard>
-                ),
-            },
-            {
-                path: "/liked-posts/:id",
-                element: (
-                    <AuthGuard>
-                        <LikedPosts />
-                    </AuthGuard>
-                ),
-            },
-            {
-                path: "/about-us",
-                element: <AboutUs />,
+                element: <AdminLayout />,
+                children: [
+                    {
+                        path: "/admin",
+                        element: <OnPending />,
+                    },
+                    {
+                        path: "/on-pending",
+                        element: <OnPending />,
+                    },
+                    {
+                        path: "/all-users",
+                        element: <AllUsers />,
+                    },
+                    {
+                        path: "/all-reports",
+                        element: <AllReports />,
+                    },
+                ],
             },
         ],
     },

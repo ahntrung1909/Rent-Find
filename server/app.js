@@ -16,6 +16,7 @@ const postRouter = require("./routes/post");
 const addressesRouter = require("./routes/addresses");
 const imgPostRouter = require("./routes/imgPost");
 const reportRouter = require("./routes/report");
+const adminRouter = require("./routes/admin");
 const app = express();
 
 app.use(
@@ -52,6 +53,7 @@ app.use("/api/post", postRouter);
 app.use("/api/addresses", addressesRouter);
 app.use("/api/img-post", imgPostRouter);
 app.use("/api/report", reportRouter);
+app.use("/api/admin", adminRouter);
 
 app.use("/api/public/vapi", async (req, res) => {
     const path = req.path;

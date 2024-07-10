@@ -101,7 +101,7 @@ export default function PostDetails() {
 
         setPostDetails(postDetailsFull);
 
-        if (user.data && user.data.id) {
+        if (user?.data && user?.data?.id) {
             const likeResponse = await axios.post(
                 "http://localhost:3000/api/post/check-like",
                 {
@@ -124,8 +124,18 @@ export default function PostDetails() {
                 <div className="details">
                     <div className="wrapper">
                         {/* <Slider images={singlePostData.images} /> */}
-                        <Slider images={postDetails.ImgPost} />
-
+                        {postDetails?.ImgPost?.length ? (
+                            <Slider images={postDetails.ImgPost} />
+                        ) : (
+                            <img
+                                style={{
+                                    height: "250px",
+                                    width: "500px",
+                                }}
+                                src="/grey-img-3.svg"
+                                alt=""
+                            />
+                        )}
                         <div className="info">
                             <div className="top">
                                 <div className="post">

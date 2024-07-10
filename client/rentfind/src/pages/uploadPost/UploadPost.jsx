@@ -123,11 +123,10 @@ export default function UploadPost() {
                         .then((res) => {
                             if (res.status === 200) {
                                 message.success("Tạo bài viết thành công !");
-                                navigate("/");
-                                // setTimeout(() => {
-                                //     window.location.href =
-                                //         "http://localhost:5173/";
-                                // }, 1000);
+                                setTimeout(() => {
+                                    window.location.href =
+                                        "http://localhost:5173/";
+                                }, 1000);
                             }
                         })
                         .catch((err) => {
@@ -151,17 +150,6 @@ export default function UploadPost() {
                     ]}
                 />
 
-                {/* <ProFormText
-                    name="postDescription"
-                    label="Mô tả bài viết"
-                    placeholder="Nhập mô tả bài viết"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập mô tả bài viết",
-                        },
-                    ]}
-                /> */}
                 <ProFormTextArea
                     name="postDescription"
                     label="Mô tả bài viết"
@@ -190,12 +178,12 @@ export default function UploadPost() {
                     name="price"
                     label="Giá tiền"
                     placeholder="Nhập giá tiền"
-                    // rules={[
-                    //     {
-                    //         required: true,
-                    //         message: "Vui lòng nhập giá tiền",
-                    //     },
-                    // ]}
+                    rules={[
+                        {
+                            pattern: /^\d+(\.\d+)?$/,
+                            message: "Giá tiền phải là một số hợp lệ",
+                        },
+                    ]}
                 />
 
                 <ProFormSelect
@@ -210,6 +198,12 @@ export default function UploadPost() {
                         {
                             label: "Cho Thuê",
                             value: "lease",
+                        },
+                    ]}
+                    rules={[
+                        {
+                            required: true,
+                            message: "Vui lòng nhập giá tiền",
                         },
                     ]}
                 />
