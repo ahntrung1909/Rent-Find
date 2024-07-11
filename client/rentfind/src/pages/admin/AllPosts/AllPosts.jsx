@@ -41,16 +41,19 @@ export default function AllPosts() {
         getallPosts();
     }, []);
 
-    const deletePost = async (id, postAddressId, imgUrl) => {
+    const deletePost = async (id, postAddressId, imgPosts) => {
         try {
             const res = await axios.post(
                 `http://localhost:3000/api/admin/delete-post/${id}`,
-                { post_address_id: postAddressId, img_url: imgUrl }
+                { post_address_id: postAddressId, imgPosts: imgPosts }
             );
             if (res.status === 200) {
                 message.success("Xóa bài viết thành công!");
             }
             getallPosts();
+            setTimeout(() => {
+                window.location.href = "http://localhost:5173/all-posts";
+            }, 750);
         } catch (error) {
             console.error("Error censoring post:", error);
             message.error("Xóa bài viết thất bại!");
@@ -67,7 +70,7 @@ export default function AllPosts() {
             user: item.User?.full_name,
             status: item.status === "false" ? "Chưa duyệt" : "Đã duyệt",
             post_address_id: item.post_address_id,
-            img_url: item.ImgPosts.map((item) => item.img_url),
+            imgPosts: item.ImgPosts,
             type: item.type === "rent" ? "Thuê" : "Cho thuê",
         };
     });
@@ -118,7 +121,7 @@ export default function AllPosts() {
                         deletePost(
                             record.id,
                             record.post_address_id,
-                            record.img_url
+                            record.imgPosts
                         )
                     }
                 >

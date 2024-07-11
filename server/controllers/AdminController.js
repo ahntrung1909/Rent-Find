@@ -130,6 +130,21 @@ const AdminController = {
         try {
             const idPost = req.params.id;
             const postAddressId = req.body.post_address_id;
+            const imgPosts = req.body.imgPosts;
+            const publicIds = imgPosts.map((item) => item.public_id);
+
+            if (publicIds) {
+                //chưa xóa được
+                for (const publicId of publicIds) {
+                    cloudinary.uploader.destroy(publicId, (error, result) => {
+                        if (error) {
+                            console.error("Xóa ảnh thất bại:", error);
+                        } else {
+                            console.log("Xóa ảnh thành công:", result);
+                        }
+                    });
+                }
+            }
 
             await ImgPost.destroy({
                 where: {
