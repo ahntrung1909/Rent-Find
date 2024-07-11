@@ -12,18 +12,22 @@ export default function AdminHeader() {
     const onClick = ({ key }) => {
         switch (key) {
             case "1":
+                message.info("Xem tất cả bài viết");
+                navigate(`/all-posts`);
+                break;
+            case "2":
                 message.info("Duyệt bài viết");
                 navigate(`/on-pending`);
                 break;
-            case "2":
+            case "3":
                 message.info("Xem tất cả người dùng");
                 navigate(`/all-users`);
                 break;
-            case "3":
+            case "4":
                 message.info("Xem các đơn tố cáo");
                 navigate(`/all-reports`);
                 break;
-            case "4":
+            case "5":
                 message.success({
                     message: "Đăng xuất thành công",
                 });
@@ -39,20 +43,24 @@ export default function AdminHeader() {
     };
     const items = [
         {
-            label: "Duyệt bài viết",
+            label: `Xem tất cả bài viết`,
             key: "1",
         },
         {
-            label: "Xem người dùng",
+            label: "Duyệt bài viết",
             key: "2",
         },
         {
-            label: `Xem đơn tố cáo`,
+            label: "Xem người dùng",
             key: "3",
         },
         {
-            label: "Đăng xuất",
+            label: `Xem đơn tố cáo`,
             key: "4",
+        },
+        {
+            label: "Đăng xuất",
+            key: "5",
         },
     ];
     return (

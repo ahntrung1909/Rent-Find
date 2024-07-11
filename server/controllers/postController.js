@@ -52,7 +52,7 @@ const PostController = {
                     description: postDescription,
                     price,
                     title,
-                    status: "true", //về sau làm duyệt thì sẽ là false
+                    status: "false",
                     type: type,
                     post_address_id: newId1,
                     user_id: currentUserId,

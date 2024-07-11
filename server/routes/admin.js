@@ -12,4 +12,5 @@ router.get(`/get-all-violated-users`, adminController.getAllViolatedUsers);
 router.get(`/get-all-reports`, adminController.getAllReports);
 router.get(`/get-all-posts`, adminController.getAllPosts);
 router.get(`/get-all-pending-posts`, adminController.getAllPendingPosts);
+router.post(`/delete-post/:id`, adminController.deletePosts);
 module.exports = router;

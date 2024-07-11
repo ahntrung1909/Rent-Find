@@ -122,7 +122,9 @@ export default function UploadPost() {
                         )
                         .then((res) => {
                             if (res.status === 200) {
-                                message.success("Tạo bài viết thành công !");
+                                message.success(
+                                    "Tạo bài viết thành công, đợi kiểm duyệt bài viết!"
+                                );
                                 setTimeout(() => {
                                     window.location.href =
                                         "http://localhost:5173/";

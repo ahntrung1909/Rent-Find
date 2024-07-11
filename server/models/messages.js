@@ -9,14 +9,14 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            Messages.belongsTo(models.User, {
-                foreignKey: "senderId",
-                as: "fK_messages_user_senderid",
-            });
-            Messages.belongsTo(models.User, {
-                foreignKey: "receiverId",
-                as: "fK_messages_user_receiverid",
-            });
+            // Messages.belongsTo(models.User, {
+            //     foreignKey: "sender_id",
+            //     as: "user",
+            // });
+            // Messages.belongsTo(models.User, {
+            //     foreignKey: "receiver_id",
+            //     as: "user",
+            // });
         }
     }
     Messages.init(

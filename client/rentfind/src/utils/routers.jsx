@@ -20,6 +20,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import OnPending from "../pages/admin/OnPending/OnPending";
 import AllUsers from "../pages/admin/AllUsers/AllUsers";
 import AllReports from "../pages/admin/AllReports/AllReports";
+import AllPosts from "../pages/admin/AllPosts/AllPosts";
 
 export const routers = createBrowserRouter([
     {
@@ -132,6 +133,10 @@ export const routers = createBrowserRouter([
                     {
                         path: "/all-reports",
                         element: <AllReports />,
+                    },
+                    {
+                        path: "/all-posts",
+                        element: <AllPosts />,
                     },
                 ],
             },

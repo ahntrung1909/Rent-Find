@@ -2,7 +2,7 @@ import "./card.scss";
 import React, { useState } from "react";
 import { listData } from "../../lib/dummydata.js";
 import { Link } from "react-router-dom";
-import FormModal from "../Modal/Modal.jsx";
+import FormModal from "../ReportModal/Modal.jsx";
 
 function Card(props) {
     const { item, type, handleShowPost, handleHiddenPost } = props;
@@ -72,8 +72,13 @@ function Card(props) {
                 <p className="address">
                     <img src="/pin.png" alt="" />
                     <span>
-                        {item.Address.description} {item.Address.ward},{" "}
-                        {item.Address.district},<br></br> {item.Address.city}
+                        {item.Address.description ? (
+                            <span>{item.Address.description},</span>
+                        ) : (
+                            <></>
+                        )}{" "}
+                        {item.Address.ward}, {item.Address.district},<br></br>{" "}
+                        {item.Address.city}
                     </span>
                 </p>
                 {item.price ? (

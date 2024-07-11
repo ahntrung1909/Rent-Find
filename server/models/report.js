@@ -9,17 +9,13 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            // Report.hasMany(models.ImgReport, {
-            //     foreignKey: "reportid",
-            //     as: "FK_imgreport_reportid",
-            // });
             // Report.belongsTo(models.User, {
             //     foreignKey: "accuser",
-            //     as: "fK_report_user_accuser",
+            //     as: "user",
             // });
             // Report.belongsTo(models.User, {
             //     foreignKey: "accused",
-            //     as: "fK_report_user_accused",
+            //     as: "user",
             // });
         }
     }

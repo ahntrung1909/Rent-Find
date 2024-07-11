@@ -12,22 +12,18 @@ module.exports = (sequelize, DataTypes) => {
             User.belongsTo(models.Addresses, {
                 foreignKey: "user_address_id",
             });
-            // User.hasMany(models.Messages, {
-            //     foreignKey: "senderId",
-            //     as: "fK_messages_user_senderid",
-            // });
-            // User.hasMany(models.Messages, {
-            //     foreignKey: "receiverId",
-            //     as: "fK_messages_user_receiverid",
-            // });
-            // User.hasMany(models.Report, {
-            //     foreignKey: "accuser",
-            //     as: "fK_report_user_accuser",
-            // });
-            // User.hasMany(models.Report, {
-            //     foreignKey: "accused",
-            //     as: "fK_report_user_accused",
-            // });
+            User.hasMany(models.Messages, {
+                foreignKey: "receiver_id",
+            });
+            User.hasMany(models.Messages, {
+                foreignKey: "sender_id",
+            });
+            User.hasMany(models.Report, {
+                foreignKey: "accuser",
+            });
+            User.hasMany(models.Report, {
+                foreignKey: "accused",
+            });
         }
     }
     User.init(

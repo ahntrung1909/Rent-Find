@@ -11,7 +11,7 @@ import { userState } from "../../recoil/atom.js";
 
 function FormModal({ item, isModalOpen, setIsModalOpen }) {
     const [user, setUser] = useRecoilState(userState);
-    console.log(item);
+    // console.log(item);
     const showModal = () => {
         setIsModalOpen(true);
     };

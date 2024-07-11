@@ -4,51 +4,60 @@ import {
     ProForm,
     ProFormText,
 } from "@ant-design/pro-components";
-import axios from "axios";
-import "./onPending.scss";
+import axios, { all } from "axios";
+import "./allPosts.scss";
 import { Table, Button, message } from "antd";
-
 import AdminList from "../../../components/AdminList/AdminList";
 
-export default function OnPending() {
-    const [pendingPosts, setPendingPosts] = useState([]);
-    const [typePage, setTypePage] = useState("ON_PENDING");
+export default function AllPosts() {
+    const [allPosts, setAllPosts] = useState([]);
+    const [typePage, setTypePage] = useState("ALL_POSTS");
 
-    const getPendingPosts = async () => {
+    const getallPosts = async () => {
         try {
             const response = await axios.get(
-                "http://localhost:3000/api/admin/get-all-pending-posts"
+                "http://localhost:3000/api/admin/get-all-posts"
             );
-            // console.log(response.data);
-            setPendingPosts(response.data);
+            const posts = response.data;
+            // Duyệt qua mỗi bài viết và lấy ImgPosts
+            const postsWithImages = await Promise.all(
+                posts.data.map(async (post) => {
+                    const imgResponse = await axios.get(
+                        `http://localhost:3000/api/img-post/img/${post.id}`
+                    );
+                    return {
+                        ...post,
+                        ImgPosts: imgResponse.data, // Giả sử imgResponse.data chứa ImgPosts
+                    };
+                })
+            );
+            setAllPosts(postsWithImages);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
 
     useEffect(() => {
-        getPendingPosts();
+        getallPosts();
     }, []);
 
-    const censorPost = async (id) => {
+    const deletePost = async (id, postAddressId, imgUrl) => {
         try {
             const res = await axios.post(
-                `http://localhost:3000/api/post/update-post/${id}`,
-                { status: true }
+                `http://localhost:3000/api/admin/delete-post/${id}`,
+                { post_address_id: postAddressId, img_url: imgUrl }
             );
             if (res.status === 200) {
-                message.success("Duyệt bài viết thành công!");
+                message.success("Xóa bài viết thành công!");
             }
-            getPendingPosts();
-            setTimeout(() => {
-                window.location.href = "http://localhost:5173/on-pending";
-            }, 750);
+            getallPosts();
         } catch (error) {
             console.error("Error censoring post:", error);
-            message.error("Duyệt bài viết thất bại!");
+            message.error("Xóa bài viết thất bại!");
         }
     };
-    const dataSource = pendingPosts.data?.map((item) => {
+
+    const dataSource = allPosts.map((item) => {
         return {
             key: item.id,
             id: item.id,
@@ -56,7 +65,9 @@ export default function OnPending() {
             price: item.price,
             title: item.title,
             user: item.User?.full_name,
-            status: item.status === "false" ? "Chưa duyệt" : "",
+            status: item.status === "false" ? "Chưa duyệt" : "Đã duyệt",
+            post_address_id: item.post_address_id,
+            img_url: item.ImgPosts.map((item) => item.img_url),
             type: item.type === "rent" ? "Thuê" : "Cho thuê",
         };
     });
@@ -101,14 +112,22 @@ export default function OnPending() {
             title: "Tùy chọn",
             key: "action",
             render: (_, record) => (
-                <Button type="primary" onClick={() => censorPost(record.id)}>
-                    Duyệt bài viết
+                <Button
+                    type="primary"
+                    onClick={() =>
+                        deletePost(
+                            record.id,
+                            record.post_address_id,
+                            record.img_url
+                        )
+                    }
+                >
+                    Xóa bài viết
                 </Button>
             ),
         },
     ];
 
-    console.log(pendingPosts);
     return (
         <>
             <div className="container">
@@ -117,7 +136,7 @@ export default function OnPending() {
                         textAlign: "center",
                     }}
                 >
-                    Các bài viết chưa được duyệt
+                    Tất cả các bài viết
                 </h3>
                 <ProForm
                     submitter={{
@@ -138,11 +157,7 @@ export default function OnPending() {
                     />
                 </ProForm>
                 <div className="content">
-                    {pendingPosts.count === 0 ? (
-                        <p>Không có bài viết nào cần duyệt</p>
-                    ) : (
-                        <AdminList dataSource={dataSource} columns={columns} />
-                    )}
+                    <AdminList dataSource={dataSource} columns={columns} />
                 </div>
             </div>
         </>
