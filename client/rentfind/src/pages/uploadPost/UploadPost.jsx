@@ -128,7 +128,7 @@ export default function UploadPost() {
                                 setTimeout(() => {
                                     window.location.href =
                                         "http://localhost:5173/";
-                                }, 1000);
+                                }, 1500);
                             }
                         })
                         .catch((err) => {

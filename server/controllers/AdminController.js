@@ -55,7 +55,18 @@ const AdminController = {
     },
     getAllReports: async (req, res) => {
         try {
-            const reports = await Report.findAndCountAll();
+            const reports = await Report.findAndCountAll({
+                include: [
+                    {
+                        model: User,
+                        as: "AccuserUser",
+                    },
+                    {
+                        model: User,
+                        as: "AccusedUser",
+                    },
+                ],
+            });
             res.status(200).json({
                 message: "Successfully fetched all reports",
                 data: reports.rows,
@@ -171,6 +182,237 @@ const AdminController = {
             res.status(500).json({
                 error: error.message,
             });
+        }
+    },
+    reportSuccess: async (req, res) => {
+        try {
+            const idReport = req.params.id;
+            const { accusedId, status, result } = req.body;
+            let action;
+            const currentAdminFullName = req.user.dataValues.full_name;
+            const count = await Report.count({
+                where: {
+                    accused: accusedId,
+                },
+            });
+
+            if (count >= 3) {
+                action = "banned";
+            } else {
+                action = "warn";
+            }
+            //gửi mail cho người bị tố cáo
+            //theo count, nếu count > 3 thì ban, count < 3 thì warn
+            await Report.update(
+                {
+                    action,
+                    status,
+                    result,
+                    verifier: currentAdminFullName,
+                    verify_at: Date.now(),
+                },
+                {
+                    where: {
+                        id: idReport,
+                    },
+                }
+            );
+            return res.status(200).json({ message: "Chỉnh sửa thành công !" });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    reportUnsuccess: async (req, res) => {
+        try {
+            const idReport = req.params.id;
+            const { status, result } = req.body;
+            const currentAdminFullName = req.user.dataValues.full_name;
+
+            //gửi mail cho người tố cáo => tố cáo không thành công
+            await Report.update(
+                {
+                    action: false,
+                    status,
+                    result,
+                    verifier: currentAdminFullName,
+                    verify_at: Date.now(),
+                },
+                {
+                    where: {
+                        id: idReport,
+                    },
+                }
+            );
+            return res.status(200).json({ message: "Chỉnh sửa thành công !" });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    searchPostsByFullName: async (req, res) => {
+        try {
+            const fullName = req.params.slug;
+            const userConditions = {};
+
+            if (fullName) {
+                userConditions.full_name =
+                    (Sequelize.fn("unaccent", Sequelize.col("full_name")),
+                    {
+                        [Sequelize.Op.iLike]: `%${fullName}%`,
+                    });
+            }
+
+            const user = await User.findOne({
+                where: userConditions,
+            });
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "Người dùng không tồn tại." });
+            }
+
+            const posts = await Posts.findAll({
+                where: {
+                    user_id: user.id,
+                },
+                include: [
+                    {
+                        model: User,
+                        attributes: ["id", "full_name", "phone_number"],
+                    },
+                    {
+                        model: Addresses,
+                        attributes: ["id"],
+                    },
+                ],
+            });
+
+            return res.status(200).json(posts);
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    searchUserByFullName: async (req, res) => {
+        try {
+            const fullName = req.params.slug;
+            const userConditions = {};
+
+            if (fullName) {
+                userConditions.full_name =
+                    (Sequelize.fn("unaccent", Sequelize.col("full_name")),
+                    {
+                        [Sequelize.Op.iLike]: `%${fullName}%`,
+                    });
+            }
+
+            const user = await User.findAndCountAll({
+                where: userConditions,
+            });
+
+            return res.status(200).json({
+                message: "Successfully fetched all posts",
+                data: user.rows,
+                count: user.count,
+            });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    searchPendingPostByFullName: async (req, res) => {
+        try {
+            const fullName = req.params.slug;
+            const userConditions = {};
+
+            if (fullName) {
+                userConditions.full_name =
+                    (Sequelize.fn("unaccent", Sequelize.col("full_name")),
+                    {
+                        [Sequelize.Op.iLike]: `%${fullName}%`,
+                    });
+            }
+
+            const user = await User.findOne({
+                where: userConditions,
+            });
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "Người dùng không tồn tại." });
+            }
+
+            const posts = await Posts.findAndCountAll({
+                where: {
+                    user_id: user.id,
+                    status: "false",
+                },
+                include: [
+                    {
+                        model: User,
+                        attributes: ["id", "full_name", "phone_number"],
+                    },
+                    {
+                        model: Addresses,
+                        attributes: ["id"],
+                    },
+                ],
+            });
+
+            return res.status(200).json({
+                message: "Successfully fetched all posts",
+                data: posts.rows,
+                count: posts.count,
+            });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    searchAccusedByFullName: async (req, res) => {
+        try {
+            const fullName = req.params.slug;
+            const userConditions = {};
+
+            if (fullName) {
+                userConditions.full_name =
+                    (Sequelize.fn("unaccent", Sequelize.col("full_name")),
+                    {
+                        [Sequelize.Op.iLike]: `%${fullName}%`,
+                    });
+            }
+
+            const user = await User.findOne({
+                where: userConditions,
+            });
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "Người dùng không tồn tại." });
+            }
+
+            const reports = await Report.findAndCountAll({
+                where: {
+                    accused: user.id,
+                },
+                include: [
+                    {
+                        model: User,
+                        as: "AccuserUser",
+                    },
+                    {
+                        model: User,
+                        as: "AccusedUser",
+                    },
+                ],
+            });
+
+            return res.status(200).json({
+                message: "Successfully fetched all posts",
+                data: reports.rows,
+                count: reports.count,
+            });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
         }
     },
 };

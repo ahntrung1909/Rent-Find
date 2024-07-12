@@ -14,15 +14,19 @@ module.exports = (sequelize, DataTypes) => {
             });
             User.hasMany(models.Messages, {
                 foreignKey: "receiver_id",
+                as: "ReceiverMessages",
             });
             User.hasMany(models.Messages, {
                 foreignKey: "sender_id",
+                as: "SenderMessages",
             });
             User.hasMany(models.Report, {
                 foreignKey: "accuser",
+                as: "AccuserReports",
             });
             User.hasMany(models.Report, {
                 foreignKey: "accused",
+                as: "AccusedReports",
             });
         }
     }
@@ -38,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             password: DataTypes.STRING,
             phone_number: DataTypes.STRING,
             role: DataTypes.STRING,
-            status: DataTypes.BOOLEAN,
+            status: DataTypes.STRING,
             user_address_id: DataTypes.STRING,
         },
         {

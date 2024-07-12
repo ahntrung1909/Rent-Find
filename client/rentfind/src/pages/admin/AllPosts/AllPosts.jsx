@@ -77,7 +77,7 @@ export default function AllPosts() {
 
     const columns = [
         {
-            title: "Id",
+            title: "Id bài viết",
             dataIndex: "id",
             key: "id",
         },
@@ -145,22 +145,50 @@ export default function AllPosts() {
                     submitter={{
                         searchConfig: {
                             submitText: "Tìm",
+                            resetText: "Quay lại",
                         },
-                        resetButtonProps: false,
                     }}
                     onFinish={async (values) => {
-                        console.log(values);
+                        const full_name = values.full_name;
+                        if (!full_name) {
+                            message.info("Vui lòng nhập từ khóa tìm kiếm!");
+                            return;
+                        }
+                        await axios
+                            .get(
+                                `http://localhost:3000/api/admin/search-posts-by-fullName/${full_name}`
+                            )
+                            .then((res) => {
+                                if (res.status === 200) {
+                                    console.log(res.data);
+                                    setAllPosts(res.data);
+                                }
+                            })
+                            .catch((err) => {
+                                message.error(
+                                    "Từ khóa tìm kiếm không tồn tại!"
+                                );
+                                console.log(err);
+                            });
+                    }}
+                    onReset={() => {
+                        window.location.href =
+                            "http://localhost:5173/all-posts";
                     }}
                 >
                     <ProFormText
-                        name="title"
-                        label="Từ khóa"
+                        name="full_name"
+                        label="Tên người dùng"
                         placeholder="Nhập từ khóa tìm kiếm"
                         className="custom-width"
                     />
                 </ProForm>
                 <div className="content">
-                    <AdminList dataSource={dataSource} columns={columns} />
+                    {allPosts.count && allPosts.count === 0 ? (
+                        <p>Không có bài viết nào</p>
+                    ) : (
+                        <AdminList dataSource={dataSource} columns={columns} />
+                    )}
                 </div>
             </div>
         </>

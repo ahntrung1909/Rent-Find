@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, Form, Input } from "antd";
+import { Modal, message, Button, Form, Input } from "antd";
 import {
     ProForm,
     ProFormTextArea,
@@ -46,7 +46,7 @@ function FormModal({ item, isModalOpen, setIsModalOpen }) {
                 }
             })
             .catch((err) => {
-                message.error("Tố cáo thất bại ! || Lỗi hệ thống !");
+                message.error("Tố cáo thất bại!");
                 console.log(err);
             });
     };

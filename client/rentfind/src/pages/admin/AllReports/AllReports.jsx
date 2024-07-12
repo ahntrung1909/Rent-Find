@@ -30,72 +30,159 @@ export default function AllReports() {
     }, []);
 
     const dataSource = allReports.data?.map((item) => {
+        const statusText =
+            {
+                true: "Duyệt",
+                false: "Chưa duyệt",
+            }[item.status] || "";
+
+        const resultText =
+            {
+                true: "Thành công",
+                false: "Không thành công",
+            }[item.status] || "";
+
+        const actionText =
+            {
+                warn: "Cảnh cáo",
+                banned: "Cấm",
+                false: "Không vi phạm",
+            }[item.action] || "";
+
         return {
             key: item.id,
             id: item.id,
-            accuser: item.accuser,
-            accused: item.accused,
+            accuser: item.AccuserUser.full_name
+                ? item.AccuserUser.full_name
+                : item.accuser,
+            accused: item.AccusedUser.full_name
+                ? item.AccusedUser.full_name
+                : item.accused,
+            accusedId: item.accused,
             postId: item.post_id,
             reason: item.reason,
-            action: item.action,
-            status: item.status.toString(),
-            result: item.result.toString(),
+            action: actionText,
+            status: statusText,
+            result: resultText,
             sendAt: item.send_at,
+            verifier: item.verifier ? item.verifier : "Chưa có",
+            verify_at: item.verify_at ? item.verify_at : "Chưa có",
         };
     });
 
+    const handleReportSuccess = async (id, accused) => {
+        try {
+            const res = await axios.post(
+                `http://localhost:3000/api/admin/report-success/${id}`,
+                { status: true, result: true, accusedId: accused }
+            );
+            if (res.status === 200) {
+                message.success("Duyệt tố cáo thành công!");
+            }
+            getallReports();
+            // setTimeout(() => {
+            //     window.location.href = "http://localhost:5173/all-reports";
+            // }, 750);
+        } catch (error) {
+            console.error("Error censoring post:", error);
+            message.error("Duyệt tố cáo thất bại!");
+        }
+    };
+
+    const handleReportUnsuccess = async (id) => {
+        try {
+            const res = await axios.post(
+                `http://localhost:3000/api/admin/report-unsuccess/${id}`,
+                { status: true, result: false }
+            );
+            if (res.status === 200) {
+                message.success("Hủy duyệt tố cáo thành công!");
+            }
+            getallReports();
+            // setTimeout(() => {
+            //     window.location.href = "http://localhost:5173/all-reports";
+            // }, 750);
+        } catch (error) {
+            console.error("Error censoring post:", error);
+            message.error("Hủy duyệt tố cáo thất bại!");
+        }
+    };
+
     const columns = [
         {
-            title: "Id",
+            title: "Id đơn tố cáo",
             dataIndex: "id",
             key: "id",
         },
         {
-            title: "Accuser",
+            title: "Người tố cáo",
             dataIndex: "accuser",
             key: "accuser",
         },
         {
-            title: "Accused",
+            title: "Người bị tố cáo",
             dataIndex: "accused",
             key: "accused",
         },
         {
-            title: "Post Id",
+            title: "Id bài viết",
             dataIndex: "postId",
             key: "postId",
         },
         {
-            title: "Reason",
+            title: "Lý do",
             dataIndex: "reason",
             key: "reason",
         },
         {
-            title: "Send At",
+            title: "Được gửi vào",
             dataIndex: "sendAt",
             key: "sendAt",
         },
         {
-            title: "Action",
+            title: "Hành động",
             dataIndex: "action",
             key: "action",
         },
         {
-            title: "Status",
+            title: "Trạng thái",
             dataIndex: "status",
             key: "status",
         },
         {
-            title: "Result",
+            title: "Kết quả",
             dataIndex: "result",
             key: "result",
         },
         {
+            title: "Người kiểm duyệt",
+            dataIndex: "verifier",
+            key: "verifier",
+        },
+        {
+            title: "Duyệt vào lúc",
+            dataIndex: "verify_at",
+            key: "verify_at",
+        },
+        {
             title: "Tùy chọn",
             key: "action",
-            render: () => (
+            render: (_, record) => (
                 <>
-                    <Button type="primary">Duyệt</Button>
+                    <Button
+                        type="primary"
+                        onClick={() =>
+                            handleReportSuccess(record.id, record.accusedId)
+                        }
+                    >
+                        Duyệt
+                    </Button>
+                    <Button
+                        type="secondary"
+                        onClick={() => handleReportUnsuccess(record.id)}
+                    >
+                        Hủy
+                    </Button>
                 </>
             ),
         },
@@ -115,22 +202,49 @@ export default function AllReports() {
                     submitter={{
                         searchConfig: {
                             submitText: "Tìm",
+                            resetText: "Quay lại",
                         },
-                        resetButtonProps: false,
                     }}
                     onFinish={async (values) => {
-                        console.log(values);
+                        const full_name = values.full_name;
+                        if (!full_name) {
+                            message.info("Vui lòng nhập từ khóa tìm kiếm!");
+                            return;
+                        }
+                        await axios
+                            .get(
+                                `http://localhost:3000/api/admin/search-accused-by-fullName/${full_name}`
+                            )
+                            .then((res) => {
+                                if (res.status === 200) {
+                                    console.log(res.data);
+                                    setAllReports(res.data);
+                                }
+                            })
+                            .catch((err) => {
+                                message.error(
+                                    "Từ khóa tìm kiếm không tồn tại!"
+                                );
+                                console.log(err);
+                            });
+                    }}
+                    onReset={() => {
+                        window.location.href =
+                            "http://localhost:5173/all-reports";
                     }}
                 >
                     <ProFormText
-                        name="title"
-                        label="Từ khóa"
+                        name="full_name"
+                        label="Tên người bị tố cáo"
                         placeholder="Nhập từ khóa tìm kiếm"
-                        className="custom-width"
                     />
                 </ProForm>
                 <div className="content">
-                    <AdminList dataSource={dataSource} columns={columns} />
+                    {allReports.count === 0 ? (
+                        <p>Không có đơn tố cáo nào cần duyệt</p>
+                    ) : (
+                        <AdminList dataSource={dataSource} columns={columns} />
+                    )}
                 </div>
             </div>
         </>

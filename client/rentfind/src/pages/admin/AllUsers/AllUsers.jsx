@@ -30,6 +30,13 @@ export default function AllUsers() {
     }, []);
 
     const dataSource = allUsers.data?.map((item) => {
+        const statusText =
+            {
+                warn: "Cảnh cáo",
+                banned: "Cấm",
+                true: "OK",
+            }[item.status] || "";
+
         return {
             key: item.id,
             id: item.id,
@@ -37,13 +44,13 @@ export default function AllUsers() {
             email: item.email,
             fullName: item.full_name,
             password: item.password,
-            status: item.status.toString(),
+            status: statusText,
         };
     });
 
     const columns = [
         {
-            title: "Id",
+            title: "Id người dùng",
             dataIndex: "id",
             key: "id",
         },
@@ -98,22 +105,51 @@ export default function AllUsers() {
                     submitter={{
                         searchConfig: {
                             submitText: "Tìm",
+                            resetText: "Quay lại",
                         },
-                        resetButtonProps: false,
                     }}
                     onFinish={async (values) => {
-                        console.log(values);
+                        const full_name = values.full_name;
+                        if (!full_name) {
+                            message.info("Vui lòng nhập từ khóa tìm kiếm!");
+                            return;
+                        }
+
+                        await axios
+                            .get(
+                                `http://localhost:3000/api/admin/search-user-by-fullName/${full_name}`
+                            )
+                            .then((res) => {
+                                if (res.status === 200) {
+                                    console.log(res.data);
+                                    setAllUsers(res.data);
+                                }
+                            })
+                            .catch((err) => {
+                                message.error(
+                                    "Từ khóa tìm kiếm không tồn tại!"
+                                );
+                                console.log(err);
+                            });
+                    }}
+                    onReset={() => {
+                        window.location.href =
+                            "http://localhost:5173/all-users";
                     }}
                 >
                     <ProFormText
-                        name="title"
-                        label="Từ khóa"
+                        name="full_name"
+                        label="Tên người dùng"
                         placeholder="Nhập từ khóa tìm kiếm"
                         className="custom-width"
                     />
                 </ProForm>
                 <div className="content">
-                    <AdminList dataSource={dataSource} columns={columns} />
+                    {allUsers.count === 0 ? (
+                        <p>Không có người dùng</p>
+                    ) : (
+                        <AdminList dataSource={dataSource} columns={columns} />
+                    )}
                 </div>
             </div>
         </>

@@ -23,18 +23,23 @@ const ReportController = {
                 post_id: post_id,
             });
 
-            for (const img of images) {
-                const result = await cloudinary.uploader.upload(img.thumbUrl, {
-                    folder: "rent-find-report",
-                });
-                // console.log("result: ", result.secure_url);
+            if (!!images) {
+                for (const img of images) {
+                    const result = await cloudinary.uploader.upload(
+                        img.thumbUrl,
+                        {
+                            folder: "rent-find-report",
+                        }
+                    );
+                    // console.log("result: ", result.secure_url);
 
-                await ImgReport.create({
-                    id: img.uid,
-                    img_url: result.secure_url,
-                    public_id: result.public_id,
-                    report_id: newId1,
-                });
+                    await ImgReport.create({
+                        id: img.uid,
+                        img_url: result.secure_url,
+                        public_id: result.public_id,
+                        report_id: newId1,
+                    });
+                }
             }
             res.status(200).json({
                 message: "Report created successfully",

@@ -9,14 +9,14 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            // Report.belongsTo(models.User, {
-            //     foreignKey: "accuser",
-            //     as: "user",
-            // });
-            // Report.belongsTo(models.User, {
-            //     foreignKey: "accused",
-            //     as: "user",
-            // });
+            Report.belongsTo(models.User, {
+                foreignKey: "accuser",
+                as: "AccuserUser",
+            });
+            Report.belongsTo(models.User, {
+                foreignKey: "accused",
+                as: "AccusedUser",
+            });
         }
     }
     Report.init(
