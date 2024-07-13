@@ -12,6 +12,7 @@
     "dependencies": {
         "@ant-design/icons": "^5.3.7",
         "@ant-design/pro-components": "^2.7.10",
+        "@chatscope/chat-ui-kit-react": "^2.0.3",
         "@fortawesome/fontawesome-svg-core": "^6.5.2",
         "@fortawesome/free-brands-svg-icons": "^6.5.2",
         "@fortawesome/free-regular-svg-icons": "^6.5.2",

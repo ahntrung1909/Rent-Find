@@ -10,6 +10,7 @@ const ImgPost = model.ImgPost;
 const User = model.User;
 const Report = model.Report;
 const Sequelize = require("sequelize");
+const createTransport = require("../utils/createTransport");
 
 const AdminController = {
     getAllUsers: async (req, res) => {
@@ -188,7 +189,8 @@ const AdminController = {
         try {
             const idReport = req.params.id;
             const { accusedId, status, result } = req.body;
-            let action;
+            const transport = await createTransport();
+            let action, mailOptions;
             const currentAdminFullName = req.user.dataValues.full_name;
             const count = await Report.count({
                 where: {
@@ -196,13 +198,65 @@ const AdminController = {
                 },
             });
 
+            const user = await User.findOne({
+                where: {
+                    id: accusedId,
+                },
+            });
+            const post = await Posts.findOne({
+                where: {
+                    user_id: accusedId,
+                },
+            });
+
             if (count >= 3) {
                 action = "banned";
+                User.update(
+                    { status: "banned" },
+                    {
+                        where: {
+                            id: accusedId,
+                        },
+                    }
+                );
+                mailOptions = {
+                    to: user.email,
+                    subject: "Thư Cấm tài khoản đến từ Rent Find",
+                    html: `
+                        <h2>Xin chào người dùng ${user.email}</h2> 
+                        <h2>Thư Cấm tài khoản</h2>
+                        <p>Do bạn đã bị vi phạm lần thứ 3, sau khi chúng tôi đã cảnh cáo bạn</p>
+                        <p>Chúng tôi quyết định cấm tài khoản của bạn trên website Rent Find</p>
+                        <p>Nếu có thắc mắc, phản hồi, xin hãy liên hệ vào sdt 024.265.1420</p>
+                        <p>Thân ái,</p>
+                        <p>Đội ngũ Kiểm Duyệt Rend Find</p>
+                    `,
+                };
             } else {
                 action = "warn";
+                User.update(
+                    { status: "warn" },
+                    {
+                        where: {
+                            id: accusedId,
+                        },
+                    }
+                );
+                mailOptions = {
+                    to: user.email,
+                    subject: "Thư Cảnh cáo đến từ Rent Find",
+                    html: `
+                        <h2>Xin chào người dùng ${user.email}</h2> 
+                        <h2>Thư Cảnh cáo</h2>
+                        <p>Chúng tôi nhận thấy bài viết có tên <h4>"${post.title}"</h4> đã vi phạm tiêu chuẩn cộng đồng của chúng tôi</p>
+                        <p>Chúng tôi gửi thư này để cảnh cáo đến bạn, mong rằng bạn sẽ tuân thủ tiêu chuẩn cộng đồng để tạo nên 1 môi trường trong sạch</p>
+                        <p>Nếu có thắc mắc, phản hồi, xin hãy liên hệ vào sdt 024.265.1420</p>
+                        <p>Thân ái,</p>
+                        <p>Đội ngũ Kiểm Duyệt Rend Find</p>
+                    `,
+                };
             }
-            //gửi mail cho người bị tố cáo
-            //theo count, nếu count > 3 thì ban, count < 3 thì warn
+
             await Report.update(
                 {
                     action,
@@ -217,6 +271,7 @@ const AdminController = {
                     },
                 }
             );
+            await transport.sendMail(mailOptions);
             return res.status(200).json({ message: "Chỉnh sửa thành công !" });
         } catch (error) {
             res.status(500).json({ errors: error.message });
@@ -225,9 +280,34 @@ const AdminController = {
     reportUnsuccess: async (req, res) => {
         try {
             const idReport = req.params.id;
-            const { status, result } = req.body;
+            const { status, result, accuserId, accusedId } = req.body;
             const currentAdminFullName = req.user.dataValues.full_name;
+            const transport = await createTransport();
 
+            const user = await User.findOne({
+                where: {
+                    id: accuserId,
+                },
+            });
+            const post = await Posts.findOne({
+                where: {
+                    user_id: accusedId,
+                },
+            });
+
+            const mailOptions = {
+                to: user.email,
+                subject: "Trạng thái của đơn tố cáo",
+                html: `
+                    <h2>Xin chào người dùng ${user.email}</h2> 
+                    <p>Chúng tôi gửi mail để thông báo rằng bài viết có tên <h4>"${post.title}"</h4> mà bạn đã tố cáo không được chúng tôi thông qua</p>
+                    <p>Chúng tôi nhận thấy bài viết này không có lỗi vi phạm như bạn đã gửi về cho chúng tôi</p>
+                    <p>Cảm ơn bạn vì ý kiến đóng góp</p>
+                    <p>Nếu có thắc mắc, phản hồi, xin hãy liên hệ vào sdt 024.265.1420</p>
+                    <p>Thân ái,</p>
+                    <p>Đội ngũ Kiểm Duyệt Rend Find</p>
+                `,
+            };
             //gửi mail cho người tố cáo => tố cáo không thành công
             await Report.update(
                 {
@@ -243,6 +323,8 @@ const AdminController = {
                     },
                 }
             );
+            await transport.sendMail(mailOptions);
+
             return res.status(200).json({ message: "Chỉnh sửa thành công !" });
         } catch (error) {
             res.status(500).json({ errors: error.message });

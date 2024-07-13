@@ -59,6 +59,7 @@ export default function AllReports() {
                 ? item.AccusedUser.full_name
                 : item.accused,
             accusedId: item.accused,
+            accuserId: item.accuser,
             postId: item.post_id,
             reason: item.reason,
             action: actionText,
@@ -89,11 +90,16 @@ export default function AllReports() {
         }
     };
 
-    const handleReportUnsuccess = async (id) => {
+    const handleReportUnsuccess = async (id, accuser, accused) => {
         try {
             const res = await axios.post(
                 `http://localhost:3000/api/admin/report-unsuccess/${id}`,
-                { status: true, result: false }
+                {
+                    status: true,
+                    result: false,
+                    accuserId: accuser,
+                    accusedId: accused,
+                }
             );
             if (res.status === 200) {
                 message.success("Hủy duyệt tố cáo thành công!");
@@ -179,7 +185,13 @@ export default function AllReports() {
                     </Button>
                     <Button
                         type="secondary"
-                        onClick={() => handleReportUnsuccess(record.id)}
+                        onClick={() =>
+                            handleReportUnsuccess(
+                                record.id,
+                                record.accusedId,
+                                record.accuserId
+                            )
+                        }
                     >
                         Hủy
                     </Button>
