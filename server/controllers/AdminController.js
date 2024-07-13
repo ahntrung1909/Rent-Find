@@ -272,7 +272,9 @@ const AdminController = {
                 }
             );
             await transport.sendMail(mailOptions);
-            return res.status(200).json({ message: "Chỉnh sửa thành công !" });
+            return res
+                .status(200)
+                .json({ message: "Duyệt đơn tố cáo thành công !" });
         } catch (error) {
             res.status(500).json({ errors: error.message });
         }
@@ -280,11 +282,11 @@ const AdminController = {
     reportUnsuccess: async (req, res) => {
         try {
             const idReport = req.params.id;
-            const { status, result, accuserId, accusedId } = req.body;
+            const { status, result, accusedId, accuserId } = req.body;
             const currentAdminFullName = req.user.dataValues.full_name;
             const transport = await createTransport();
 
-            const user = await User.findOne({
+            const accuserUser = await User.findOne({
                 where: {
                     id: accuserId,
                 },
@@ -296,10 +298,10 @@ const AdminController = {
             });
 
             const mailOptions = {
-                to: user.email,
+                to: accuserUser.email,
                 subject: "Trạng thái của đơn tố cáo",
                 html: `
-                    <h2>Xin chào người dùng ${user.email}</h2> 
+                    <h2>Xin chào người dùng ${accuserUser.email}</h2> 
                     <p>Chúng tôi gửi mail để thông báo rằng bài viết có tên <h4>"${post.title}"</h4> mà bạn đã tố cáo không được chúng tôi thông qua</p>
                     <p>Chúng tôi nhận thấy bài viết này không có lỗi vi phạm như bạn đã gửi về cho chúng tôi</p>
                     <p>Cảm ơn bạn vì ý kiến đóng góp</p>
@@ -325,7 +327,9 @@ const AdminController = {
             );
             await transport.sendMail(mailOptions);
 
-            return res.status(200).json({ message: "Chỉnh sửa thành công !" });
+            return res.status(200).json({
+                message: "Hủy đơn tố cáo thành công !",
+            });
         } catch (error) {
             res.status(500).json({ errors: error.message });
         }

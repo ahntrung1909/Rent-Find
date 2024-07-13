@@ -104,6 +104,7 @@ export default function AllReports() {
             if (res.status === 200) {
                 message.success("Hủy duyệt tố cáo thành công!");
             }
+            console.log(res.data);
             getallReports();
             // setTimeout(() => {
             //     window.location.href = "http://localhost:5173/all-reports";
@@ -188,8 +189,8 @@ export default function AllReports() {
                         onClick={() =>
                             handleReportUnsuccess(
                                 record.id,
-                                record.accusedId,
-                                record.accuserId
+                                record.accuserId,
+                                record.accusedId
                             )
                         }
                     >
