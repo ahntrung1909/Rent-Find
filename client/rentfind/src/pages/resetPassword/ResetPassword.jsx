@@ -4,7 +4,7 @@ import {
     ProFormCheckbox,
     ProFormText,
 } from "@ant-design/pro-components";
-import { notification } from "antd";
+import { notification, message } from "antd";
 import {
     LockOutlined,
     FacebookOutlined,
@@ -34,6 +34,9 @@ export default function ResetPassword() {
                         searchConfig: { submitText: "Lấy mã xác thực" },
                     }}
                     onFinish={async (values) => {
+                        message.info(
+                            "Đang gửi mã xác nhận, vui lòng chờ trong giây lát!"
+                        );
                         const res = await axios.post(
                             "http://localhost:3000/api/auth/reset-password/get-code",
                             { email: values.useremail }

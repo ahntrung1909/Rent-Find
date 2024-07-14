@@ -66,6 +66,10 @@ const AdminController = {
                         model: User,
                         as: "AccusedUser",
                     },
+                    {
+                        model: Posts,
+                        as: "PostReport",
+                    },
                 ],
             });
             res.status(200).json({

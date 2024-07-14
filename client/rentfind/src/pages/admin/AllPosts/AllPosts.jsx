@@ -139,7 +139,7 @@ export default function AllPosts() {
                         textAlign: "center",
                     }}
                 >
-                    Tất cả các bài viết
+                    Quản lý bài viết
                 </h3>
                 <ProForm
                     submitter={{

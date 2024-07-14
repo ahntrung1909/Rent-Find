@@ -12,7 +12,7 @@ export default function AdminHeader() {
     const onClick = ({ key }) => {
         switch (key) {
             case "1":
-                message.info("Xem tất cả bài viết");
+                message.info("Quản lý bài viết");
                 navigate(`/all-posts`);
                 break;
             case "2":
@@ -20,11 +20,11 @@ export default function AdminHeader() {
                 navigate(`/on-pending`);
                 break;
             case "3":
-                message.info("Xem tất cả người dùng");
+                message.info("Quản lý người dùng");
                 navigate(`/all-users`);
                 break;
             case "4":
-                message.info("Xem các đơn tố cáo");
+                message.info("Quản lý đơn tố cáo");
                 navigate(`/all-reports`);
                 break;
             case "5":
@@ -43,7 +43,7 @@ export default function AdminHeader() {
     };
     const items = [
         {
-            label: `Xem tất cả bài viết`,
+            label: `Bài viết`,
             key: "1",
         },
         {
@@ -51,11 +51,11 @@ export default function AdminHeader() {
             key: "2",
         },
         {
-            label: "Xem người dùng",
+            label: "Người dùng",
             key: "3",
         },
         {
-            label: `Xem đơn tố cáo`,
+            label: `Đơn tố cáo`,
             key: "4",
         },
         {

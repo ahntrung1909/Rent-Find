@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "accused",
                 as: "AccusedUser",
             });
+            Report.belongsTo(models.Posts, {
+                foreignKey: "post_id",
+                as: "PostReport",
+            });
         }
     }
     Report.init(

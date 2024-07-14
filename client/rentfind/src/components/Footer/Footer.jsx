@@ -33,8 +33,8 @@ export default function Footer() {
                 </Col>
                 <Col span={6}>
                     <h2>Về Rent Find</h2>
-                    <a href="#">Trang chủ</a> <br />
-                    <a href="#">Giới thiệu</a> <br />
+                    <a href="/">Trang chủ</a> <br />
+                    <a href="/about-us">Giới thiệu</a> <br />
                     <a href="#">Blog</a> <br />
                     <a href="#">Quy chế hoạt động</a> <br />
                     <a href="#">Quy chế sử dụng</a> <br />

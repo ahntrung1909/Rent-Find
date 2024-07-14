@@ -116,7 +116,7 @@ export default function OnPending() {
                         textAlign: "center",
                     }}
                 >
-                    Các bài viết chưa được duyệt
+                    Duyệt bài viết
                 </h3>
                 <ProForm
                     submitter={{

@@ -16,6 +16,7 @@ import MyPosts from "../pages/myPosts/MyPosts";
 import HiddenPosts from "../pages/hiddenPosts/HiddenPosts";
 import LeasePage from "../pages/leasePage/LeasePage";
 import RentPage from "../pages/rentPage/RentPage";
+import Messenger from "../components/Messenger/Messenger";
 import AdminLayout from "../layouts/AdminLayout";
 import OnPending from "../pages/admin/OnPending/OnPending";
 import AllUsers from "../pages/admin/AllUsers/AllUsers";
@@ -112,6 +113,10 @@ export const routers = createBrowserRouter([
                     {
                         path: "/about-us",
                         element: <AboutUs />,
+                    },
+                    {
+                        path: "/messenger",
+                        element: <Messenger />,
                     },
                 ],
             },

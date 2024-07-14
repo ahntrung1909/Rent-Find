@@ -55,14 +55,14 @@ export default function AllUsers() {
             key: "id",
         },
         {
-            title: "Ngày sinh",
-            dataIndex: "dateOfBirth",
-            key: "dateOfBirth",
-        },
-        {
             title: "Họ và Tên",
             dataIndex: "fullName",
             key: "fullName",
+        },
+        {
+            title: "Ngày sinh",
+            dataIndex: "dateOfBirth",
+            key: "dateOfBirth",
         },
         {
             title: "Email",
@@ -79,16 +79,16 @@ export default function AllUsers() {
             dataIndex: "status",
             key: "status",
         },
-        {
-            title: "Tùy chọn",
-            key: "action",
-            render: () => (
-                <>
-                    <Button type="primary">Sửa thông tin</Button>
-                    {/* <Button type="secondary">Xem bài viết</Button> */}
-                </>
-            ),
-        },
+        // {
+        //     title: "Tùy chọn",
+        //     key: "action",
+        //     render: () => (
+        //         <>
+        //             <Button type="primary">Sửa thông tin</Button>
+        //             {/* <Button type="secondary">Xem bài viết</Button> */}
+        //         </>
+        //     ),
+        // },
     ];
 
     return (
@@ -99,7 +99,7 @@ export default function AllUsers() {
                         textAlign: "center",
                     }}
                 >
-                    Tất cả người dùng
+                    Quản lý người dùng
                 </h3>
                 <ProForm
                     submitter={{

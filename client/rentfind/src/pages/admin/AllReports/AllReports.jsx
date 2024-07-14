@@ -40,7 +40,7 @@ export default function AllReports() {
             {
                 true: "Thành công",
                 false: "Không thành công",
-            }[item.status] || "";
+            }[item.result] || "";
 
         const actionText =
             {
@@ -60,7 +60,7 @@ export default function AllReports() {
                 : item.accused,
             accusedId: item.accused,
             accuserId: item.accuser,
-            postId: item.post_id,
+            postTitle: item.PostReport.title,
             reason: item.reason,
             action: actionText,
             status: statusText,
@@ -72,6 +72,9 @@ export default function AllReports() {
     });
 
     const handleReportSuccess = async (id, accused) => {
+        message.info(
+            "Đơn tố cáo đang được xử lý, vui lòng chờ trong giây lát!"
+        );
         try {
             const res = await axios.post(
                 `http://localhost:3000/api/admin/report-success/${id}`,
@@ -91,6 +94,9 @@ export default function AllReports() {
     };
 
     const handleReportUnsuccess = async (id, accuser, accused) => {
+        message.info(
+            "Đơn tố cáo đang được xử lý, vui lòng chờ trong giây lát!"
+        );
         try {
             const res = await axios.post(
                 `http://localhost:3000/api/admin/report-unsuccess/${id}`,
@@ -132,9 +138,9 @@ export default function AllReports() {
             key: "accused",
         },
         {
-            title: "Id bài viết",
-            dataIndex: "postId",
-            key: "postId",
+            title: "Tiêu đề bài viết",
+            dataIndex: "postTitle",
+            key: "postTitle",
         },
         {
             title: "Lý do",
@@ -182,7 +188,7 @@ export default function AllReports() {
                             handleReportSuccess(record.id, record.accusedId)
                         }
                     >
-                        Duyệt
+                        Duyệt đơn
                     </Button>
                     <Button
                         type="secondary"
@@ -194,7 +200,7 @@ export default function AllReports() {
                             )
                         }
                     >
-                        Hủy
+                        Hủy đơn
                     </Button>
                 </>
             ),
@@ -209,7 +215,7 @@ export default function AllReports() {
                         textAlign: "center",
                     }}
                 >
-                    Tất cả đơn tố cáo
+                    Quản lý đơn tố cáo
                 </h3>
                 <ProForm
                     submitter={{
