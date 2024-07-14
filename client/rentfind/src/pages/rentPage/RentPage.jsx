@@ -235,8 +235,12 @@ function RentPage() {
                                     value: "2_to_3_million",
                                 },
                                 {
-                                    label: "3 đến 5 triệu",
-                                    value: "3_to_5_million",
+                                    label: "3 đến 4 triệu",
+                                    value: "3_to_4_million",
+                                },
+                                {
+                                    label: "4 đến 5 triệu",
+                                    value: "4_to_5_million",
                                 },
                                 {
                                     label: "5 đến 7 triệu",

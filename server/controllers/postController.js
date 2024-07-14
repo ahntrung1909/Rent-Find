@@ -280,9 +280,14 @@ const PostController = {
                             [Op.between]: [2000000, 3000000],
                         };
                         break;
-                    case "3_to_5_million":
+                    case "3_to_4_million":
                         postConditions.price = {
-                            [Op.between]: [3000000, 5000000],
+                            [Op.between]: [3000000, 4000000],
+                        };
+                        break;
+                    case "4_to_5_million":
+                        postConditions.price = {
+                            [Op.between]: [4000000, 5000000],
                         };
                         break;
                     case "5_to_7_million":
