@@ -115,6 +115,9 @@ export default function UploadPost() {
                 }}
                 onFinish={async (values) => {
                     console.log("values:" + values);
+                    message.info(
+                        "Bài viết đang được tạo, vui lòng chờ trong giây lát!"
+                    );
                     axios
                         .post(
                             "http://localhost:3000/api/post/upload-post",

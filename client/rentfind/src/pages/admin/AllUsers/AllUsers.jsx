@@ -45,6 +45,7 @@ export default function AllUsers() {
             fullName: item.full_name,
             password: item.password,
             status: statusText,
+            violated: item.AccusedReport.length,
         };
     });
 
@@ -78,6 +79,11 @@ export default function AllUsers() {
             title: "Trạng thái tài khoản",
             dataIndex: "status",
             key: "status",
+        },
+        {
+            title: "Số lần vi phạm",
+            dataIndex: "violated",
+            key: "violated",
         },
         // {
         //     title: "Tùy chọn",

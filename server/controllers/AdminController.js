@@ -19,6 +19,13 @@ const AdminController = {
                 where: {
                     role: "user",
                 },
+                include: [
+                    {
+                        model: Report,
+                        as: "AccusedReport",
+                        attributes: ["accused"],
+                    },
+                ],
             });
             res.status(200).json({
                 message: "Successfully fetched all users",
@@ -38,7 +45,9 @@ const AdminController = {
             const users = await User.findAndCountAll({
                 where: {
                     role: "user",
-                    status: "false", // có thể là ban hoặc warning?
+                    status: {
+                        [Op.or]: ["banned", "warn"],
+                    },
                 },
             });
             res.status(200).json({
@@ -508,23 +517,3 @@ const AdminController = {
 };
 
 module.exports = AdminController;
-
-// const ImgUrls = req.body.img_url;
-
-//             if (!!ImgUrls) {
-//                 for (const imgUrl of ImgUrls) {
-//                     cloudinary.uploader.destroy(imgUrl, (error, result) => {
-//                         if (error) {
-//                             console.error("Xóa ảnh thất bại:", error);
-//                         } else {
-//                             console.log("Xóa ảnh thành công:", result);
-//                         }
-//                     });
-
-//                     await ImgPost.destroy({
-//                         where: {
-//                             post_id: idPost,
-//                         },
-//                     });
-//                 }
-//             }

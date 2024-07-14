@@ -22,11 +22,11 @@ module.exports = (sequelize, DataTypes) => {
             });
             User.hasMany(models.Report, {
                 foreignKey: "accuser",
-                as: "AccuserReports",
+                as: "AccuserReport",
             });
             User.hasMany(models.Report, {
                 foreignKey: "accused",
-                as: "AccusedReports",
+                as: "AccusedReport",
             });
         }
     }
