@@ -125,6 +125,14 @@ export default function Profile() {
         fetchUserData();
     }, []);
 
+    const statusText =
+        {
+            warn: "Cảnh cáo",
+            banned: "Cấm",
+            true: "Tốt",
+            normal: "Bình thường",
+        }[currentUser.status] || "";
+
     return (
         <div className="container">
             <div
@@ -228,6 +236,14 @@ export default function Profile() {
                         },
                     ]}
                     disabled={isDisabled}
+                />
+
+                <ProFormText
+                    name="status"
+                    label="Trạng thái tài khoản"
+                    value={statusText}
+                    placeholder="Nhập tên người dùng"
+                    disabled={true}
                 />
 
                 <ProFormSelect

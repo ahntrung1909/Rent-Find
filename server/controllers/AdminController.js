@@ -8,6 +8,7 @@ const PostLikedBy = model.PostLikedBy;
 const Addresses = model.Addresses;
 const ImgPost = model.ImgPost;
 const User = model.User;
+const ImgReport = model.ImgReport;
 const Report = model.Report;
 const Sequelize = require("sequelize");
 const createTransport = require("../utils/createTransport");
@@ -23,7 +24,7 @@ const AdminController = {
                     {
                         model: Report,
                         as: "AccusedReport",
-                        attributes: ["accused"],
+                        attributes: ["accused", "result", "action"],
                     },
                 ],
             });
@@ -78,6 +79,10 @@ const AdminController = {
                     {
                         model: Posts,
                         as: "PostReport",
+                    },
+                    {
+                        model: ImgReport,
+                        attributes: ["id", "img_url"],
                     },
                 ],
             });
@@ -406,6 +411,13 @@ const AdminController = {
 
             const user = await User.findAndCountAll({
                 where: userConditions,
+                include: [
+                    {
+                        model: Report,
+                        as: "AccusedReport",
+                        attributes: ["accused", "result", "action"],
+                    },
+                ],
             });
 
             return res.status(200).json({
@@ -501,6 +513,14 @@ const AdminController = {
                     {
                         model: User,
                         as: "AccusedUser",
+                    },
+                    {
+                        model: Posts,
+                        as: "PostReport",
+                    },
+                    {
+                        model: ImgReport,
+                        attributes: ["id", "img_url"],
                     },
                 ],
             });

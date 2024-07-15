@@ -38,7 +38,7 @@ export default function Footer() {
                     <a href="#">Blog</a> <br />
                     <a href="#">Quy chế hoạt động</a> <br />
                     <a href="#">Quy chế sử dụng</a> <br />
-                    <a href="#">Chính sách bảo mật</a> <br />
+                    <a href="/policy">Chính sách và Bảo mật</a> <br />
                     <a href="#">Liên hệ</a>
                 </Col>
                 <Col span={6}>

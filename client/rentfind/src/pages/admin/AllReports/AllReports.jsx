@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Button, message } from "antd";
+import { Table, Button, message, Tooltip } from "antd";
 import {
     ProFormSelect,
     ProForm,
@@ -62,6 +62,10 @@ export default function AllReports() {
             accuserId: item.accuser,
             postTitle: item.PostReport.title,
             reason: item.reason,
+            imgUrl:
+                item.ImgReports.length > 0
+                    ? item.ImgReports[0].img_url
+                    : "Không có",
             action: actionText,
             status: statusText,
             result: resultText,
@@ -146,6 +150,18 @@ export default function AllReports() {
             title: "Lý do",
             dataIndex: "reason",
             key: "reason",
+        },
+        {
+            title: "Ảnh",
+            dataIndex: "imgUrl",
+            key: "imgUrl",
+            render: (value) => (
+                <Tooltip title={value}>
+                    <a href={value} target="_blank" rel="noopener noreferrer">
+                        Link
+                    </a>
+                </Tooltip>
+            ),
         },
         {
             title: "Được gửi vào",

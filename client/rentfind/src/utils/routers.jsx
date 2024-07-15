@@ -12,6 +12,7 @@ import ResetPassword from "../pages/resetPassword/ResetPassword";
 import ChangePassword from "../pages/resetPassword/ChangePassword";
 import LikedPosts from "../pages/likedPosts/LikedPosts";
 import AboutUs from "../pages/aboutUs/AboutUs";
+import Policy from "../pages/policy/Policy";
 import MyPosts from "../pages/myPosts/MyPosts";
 import HiddenPosts from "../pages/hiddenPosts/HiddenPosts";
 import LeasePage from "../pages/leasePage/LeasePage";
@@ -113,6 +114,10 @@ export const routers = createBrowserRouter([
                     {
                         path: "/about-us",
                         element: <AboutUs />,
+                    },
+                    {
+                        path: "/policy",
+                        element: <Policy />,
                     },
                     {
                         path: "/messenger",

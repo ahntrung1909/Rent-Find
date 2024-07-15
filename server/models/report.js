@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: "post_id",
                 as: "PostReport",
             });
+            Report.hasMany(models.ImgReport, {
+                foreignKey: "report_id",
+            });
         }
     }
     Report.init(

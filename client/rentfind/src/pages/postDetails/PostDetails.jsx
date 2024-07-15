@@ -58,7 +58,6 @@ export default function PostDetails() {
             `http://localhost:3000/api/post/get-detail-post/${postId}`
         );
         const data = await response.data;
-        // console.log(data);
         const postAddressId = data.post_address_id;
         const userAddressId = data.user_id;
 
@@ -117,7 +116,16 @@ export default function PostDetails() {
         fetchData();
     }, [user]);
 
-    // console.log(postDetails);
+    console.log(postDetails);
+
+    const statusText =
+        {
+            warn: "Cảnh cáo",
+            banned: "Cấm",
+            true: "Tốt",
+            normal: "Bình thường",
+        }[postDetails.User?.status] || "";
+
     return (
         <div className="container">
             <div className="single-page">
@@ -194,6 +202,13 @@ export default function PostDetails() {
                                 <div className="feature-text">
                                     <span>Số điện thoại:</span>
                                     <p>{postDetails.User?.phone_number}</p>
+                                </div>
+                            </div>
+                            <div className="feature">
+                                <img src="/contract.png" alt="" />
+                                <div className="feature-text">
+                                    <span>Trạng thái tài khoản:</span>
+                                    <p>{statusText}</p>
                                 </div>
                             </div>
                         </div>

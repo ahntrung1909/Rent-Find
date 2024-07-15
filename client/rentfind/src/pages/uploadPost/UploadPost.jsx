@@ -167,6 +167,28 @@ export default function UploadPost() {
                     ]}
                 />
 
+                <ProFormSelect
+                    name="type"
+                    label="Kiểu bài đăng"
+                    placeholder="Chọn kiểu"
+                    options={[
+                        {
+                            label: "Thuê",
+                            value: "rent",
+                        },
+                        {
+                            label: "Cho Thuê",
+                            value: "lease",
+                        },
+                    ]}
+                    rules={[
+                        {
+                            required: true,
+                            message: "Vui lòng nhập giá tiền",
+                        },
+                    ]}
+                />
+
                 <ProFormUploadButton
                     name="images"
                     label="Tải ảnh lên"
@@ -187,28 +209,6 @@ export default function UploadPost() {
                         {
                             pattern: /^\d+(\.\d+)?$/,
                             message: "Giá tiền phải là một số hợp lệ",
-                        },
-                    ]}
-                />
-
-                <ProFormSelect
-                    name="type"
-                    label="Kiểu bài đăng"
-                    placeholder="Chọn kiểu"
-                    options={[
-                        {
-                            label: "Thuê",
-                            value: "rent",
-                        },
-                        {
-                            label: "Cho Thuê",
-                            value: "lease",
-                        },
-                    ]}
-                    rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập giá tiền",
                         },
                     ]}
                 />

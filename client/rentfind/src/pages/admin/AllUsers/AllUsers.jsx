@@ -34,8 +34,13 @@ export default function AllUsers() {
             {
                 warn: "Cảnh cáo",
                 banned: "Cấm",
-                true: "OK",
+                true: "Tốt",
+                normal: "Bình thường",
             }[item.status] || "";
+
+        const violatedCount = item.AccusedReport.filter(
+            (report) => report.action === "warn" || report.action === "banned"
+        ).length;
 
         return {
             key: item.id,
@@ -45,7 +50,7 @@ export default function AllUsers() {
             fullName: item.full_name,
             password: item.password,
             status: statusText,
-            violated: item.AccusedReport.length,
+            violated: violatedCount > 0 ? item.AccusedReport.length : "0",
         };
     });
 
