@@ -67,7 +67,7 @@ export default function AdminHeader() {
         <header>
             <div className="wrapper">
                 <Flex justify="space-between" align="center">
-                    <Link to="/admin" className="header-logo">
+                    <Link to="/" className="header-logo">
                         <h3>RentFind</h3>
                     </Link>
                     <Flex align="center" gap="30px">

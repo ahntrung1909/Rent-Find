@@ -55,7 +55,6 @@ export default function Login() {
                                 setAuthToken(accessToken);
                                 if (success) {
                                     message.success("Đăng nhập thành công!");
-                                    // navigate(`/`);
                                     setTimeout(() => {
                                         window.location.href =
                                             "http://localhost:5173/";

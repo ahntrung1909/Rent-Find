@@ -7,6 +7,7 @@ import ErrorPage from "../ErrorPage";
 import Profile from "../pages/profile/Profile";
 import UploadPost from "../pages/uploadPost/UploadPost";
 import AuthGuard from "../components/AuthGuard";
+import AdminGuard from "../components/AdminGuard";
 import PostDetails from "../pages/postDetails/PostDetails";
 import ResetPassword from "../pages/resetPassword/ResetPassword";
 import ChangePassword from "../pages/resetPassword/ChangePassword";
@@ -126,7 +127,11 @@ export const routers = createBrowserRouter([
                 ],
             },
             {
-                element: <AdminLayout />,
+                element: (
+                    <AdminGuard>
+                        <AdminLayout />,
+                    </AdminGuard>
+                ),
                 children: [
                     {
                         path: "/admin",
