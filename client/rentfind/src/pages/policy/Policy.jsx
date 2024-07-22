@@ -216,6 +216,14 @@ export default function Policy() {
                     bên thứ 3 nào về thông tin cá nhân của thành viên khi không
                     có sự cho phép đồng ý từ thành viên
                 </p>
+                <h2>
+                    ***Tuyệt đối nghiêm cấm mọi hành vi lừa đảo, chiếm đoạt tài
+                    sản***
+                </h2>
+                <p>
+                    Nếu bị phát hiện hoặc bị tố cáo, người dùng đó sẽ bị cấm
+                    vĩnh viễn khỏi Rent Find!
+                </p>
                 <p>
                     Website ra đời sẽ góp phần giải quyết được các vấn đề thuê
                     trọ hiện nay, và giúp mọi người tìm kiếm nhà trọ, chỗ ở phù

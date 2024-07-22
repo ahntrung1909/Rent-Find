@@ -1,23 +1,16 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 const firebaseConfig = {
-    apiKey: "AIzaSyDa93XwlbD8wFP4l0MXdyrdsAVDpilhlK8",
-    authDomain: "sent-mail-rent-find.firebaseapp.com",
-    projectId: "sent-mail-rent-find",
-    storageBucket: "sent-mail-rent-find.appspot.com",
-    messagingSenderId: "254019678992",
-    appId: "1:254019678992:web:892e14569087356a05ab95",
-    measurementId: "G-QF6ML4FQHX",
+    apiKey: "AIzaSyDb-K2zSMmt5FuCQdCf7DA3sc0dhOLrkUo",
+    authDomain: "rentfind-1bc87.firebaseapp.com",
+    projectId: "rentfind-1bc87",
+    storageBucket: "rentfind-1bc87.appspot.com",
+    messagingSenderId: "994479302377",
+    appId: "1:994479302377:web:ad72a93a30227dcc50b278",
+    measurementId: "G-ZVK9P36DYL",
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 export { firebase };

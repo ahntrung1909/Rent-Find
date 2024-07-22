@@ -106,25 +106,27 @@ export default function Header() {
                         <Link to="/rent">Thuê</Link>
                         <Link to="/lease">Cho Thuê</Link>
                         <Link to="/upload-post">Đăng bài</Link>
-                        <Link to="/messenger">Nhắn tin</Link>
-                        {user ? (
-                            <Flex align="center" gap="30px">
-                                <Dropdown
-                                    menu={{
-                                        items,
-                                        onClick,
-                                    }}
-                                >
-                                    <a onClick={(e) => e.preventDefault()}>
-                                        <Space>
-                                            {/* Thay thế thẻ <a> bằng <span> */}
-                                            <span>
-                                                Xin chào, {user.data.full_name}
-                                            </span>
-                                        </Space>
-                                    </a>
-                                </Dropdown>
-                            </Flex>
+                        <Link to={`/messenger`}>Nhắn tin</Link>
+                        {user && user.data ? (
+                            <>
+                                <Flex align="center" gap="30px">
+                                    <Dropdown
+                                        menu={{
+                                            items,
+                                            onClick,
+                                        }}
+                                    >
+                                        <a onClick={(e) => e.preventDefault()}>
+                                            <Space>
+                                                <span>
+                                                    Xin chào,{" "}
+                                                    {user.data.full_name}
+                                                </span>
+                                            </Space>
+                                        </a>
+                                    </Dropdown>
+                                </Flex>
+                            </>
                         ) : (
                             <Flex gap="10px">
                                 <Button

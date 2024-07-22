@@ -75,11 +75,11 @@ export default function AllUsers() {
             dataIndex: "email",
             key: "email",
         },
-        {
-            title: "Mật khẩu",
-            dataIndex: "password",
-            key: "password",
-        },
+        // {
+        //     title: "Mật khẩu",
+        //     dataIndex: "password",
+        //     key: "password",
+        // },
         {
             title: "Trạng thái tài khoản",
             dataIndex: "status",

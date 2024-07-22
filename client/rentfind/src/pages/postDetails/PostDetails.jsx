@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, redirect } from "react-router-dom";
 import { singlePostData, userData } from "../../lib/dummydata.js";
 import { message } from "antd";
 import Slider from "../../components/Slider/slider.jsx";
@@ -13,6 +13,38 @@ export default function PostDetails() {
     const [postDetails, setPostDetails] = useState([]);
     const [liked, setLiked] = useState(false);
     const postId = useParams().id;
+
+    const CustomLink = ({ to, disabled, children }) => {
+        return (
+            <Link
+                to={to}
+                onClick={async (e) => {
+                    const sender = user.data.id;
+                    const receiver = postDetails.User.id;
+                    try {
+                        await axios.post(
+                            `http://localhost:3000/api/message/upload-msg/`,
+                            {
+                                content: "",
+                                senderId: sender,
+                                receiverId: receiver,
+                                seen: true,
+                            }
+                        );
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }}
+                style={{
+                    pointerEvents: disabled ? "none" : "auto",
+                    color: disabled ? "gray" : "inherit",
+                    textDecoration: disabled ? "none" : "none",
+                }}
+            >
+                {children}
+            </Link>
+        );
+    };
 
     const handleLiked = async () => {
         setLiked((prev) => !prev);
@@ -195,7 +227,6 @@ export default function PostDetails() {
                                 >
                                     {postDetails.User?.full_name}
                                 </Link>
-                                {/* <span>{postDetails.User?.full_name}</span> */}
                             </div>
                             <div className="feature">
                                 <img src="/phone.jpg" alt="" />
@@ -215,24 +246,53 @@ export default function PostDetails() {
 
                         <div className="buttons">
                             <button>
-                                <img src="/chat.png" alt="" />
-                                Gửi tin nhắn
+                                {/* <Link to={`/messenger/${postDetails.User?.id}`}>
+                                    <p style={{ textAlign: "center" }}>
+                                        Gửi tin nhắn
+                                    </p>
+                                </Link> */}
+                                {/* <img src="/chat.png" alt="" /> */}
+                                <CustomLink
+                                    to={`/messenger`}
+                                    disabled={user?.data?.status === "banned"}
+                                >
+                                    <p style={{ textAlign: "center" }}>
+                                        Gửi tin nhắn
+                                    </p>
+                                </CustomLink>
                             </button>
                             {liked ? (
                                 <div
-                                    onClick={handleLiked}
+                                    onClick={
+                                        user.data.status === "banned"
+                                            ? null
+                                            : handleLiked
+                                    }
                                     className="icon heart"
                                 >
-                                    <button>
+                                    <button
+                                        disabled={user.data.status === "banned"}
+                                    >
                                         <img src="/likedHeart.png" alt="" />
-                                        Thích bài viết
+                                        <p>Thích bài viết</p>
                                     </button>
                                 </div>
                             ) : (
-                                <div className="icon" onClick={handleLiked}>
-                                    <button>
+                                <div
+                                    className="icon"
+                                    onClick={
+                                        user?.data?.status === "banned"
+                                            ? null
+                                            : handleLiked
+                                    }
+                                >
+                                    <button
+                                        disabled={
+                                            user?.data?.status === "banned"
+                                        }
+                                    >
                                         <img src="/heart.png" alt="" />
-                                        Thích bài viết
+                                        <p>Thích bài viết</p>
                                     </button>
                                 </div>
                             )}

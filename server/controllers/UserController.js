@@ -1,7 +1,10 @@
 const { v4 } = require("uuid");
 const model = require("../models/index");
 const User = model.User;
+const { Op } = require("sequelize");
+const messages = require("../models/messages");
 const Addresses = model.Addresses;
+const Messages = model.Messages;
 
 const UserController = {
     getInfo: async (req, res) => {
@@ -80,6 +83,128 @@ const UserController = {
                 message: "An error occurred while updating user information",
                 error: error,
             });
+        }
+    },
+    getAllUsers: async (req, res) => {
+        // check lại
+        const senderId = req.params.senderId;
+        const currentUserId = req.user.dataValues.id;
+        try {
+            // const users = await User.findAll({
+            //     where: {
+            //         id: {
+            //             [Op.ne]: senderId.toString(), // Loại trừ user có id là senderId
+            //         },
+            //         role: "user",
+            //     },
+            //     include: [
+            //         {
+            //             model: Messages,
+            //             as: "ReceiverMessages",
+            //         },
+            //         {
+            //             model: Messages,
+            //             as: "SenderMessages",
+            //         },
+            //     ],
+            // });
+            const messages = await Messages.findAll({
+                where: {
+                    [Op.or]: [
+                        { sender_id: senderId },
+                        { receiver_id: senderId },
+                    ],
+                },
+                include: [
+                    {
+                        model: User,
+                        as: "ReceiverUser", // Tên alias của quan hệ
+                        attributes: ["id", "full_name", "email"], // Các trường cần lấy của User
+                    },
+                    {
+                        model: User,
+                        as: "SenderUser", // Tên alias của quan hệ
+                        attributes: ["id", "full_name", "email"], // Các trường cần lấy của User
+                    },
+                ],
+                order: [
+                    ["send_at", "ASC"], // ASC cho thứ tự tăng dần, DESC cho thứ tự giảm dần
+                ],
+            });
+            console.log("mess" + messages);
+
+            let messageData = [];
+            for (let i = 0; i < messages.length; i++) {
+                let receiverMessId = messages[i].dataValues.receiver_id;
+                let senderMessId = messages[i].dataValues.sender_id;
+                if (senderId === receiverMessId) {
+                    let data = {
+                        id: senderMessId,
+                        full_name:
+                            messages[i].dataValues.SenderUser.dataValues
+                                .full_name,
+                        email: messages[i].dataValues.SenderUser.dataValues
+                            .email,
+                        lastMessage: messages[i].dataValues.content,
+                        isYourMessage: false,
+                    };
+                    messageData = messageData.filter((messData) => {
+                        return messData.id !== senderMessId;
+                    });
+                    messageData.unshift(data);
+                } else if (senderId === senderMessId) {
+                    let data = {
+                        id: receiverMessId,
+                        full_name:
+                            messages[i].dataValues.ReceiverUser.dataValues
+                                .full_name,
+                        email: messages[i].dataValues.ReceiverUser.dataValues
+                            .email,
+                        lastMessage: messages[i].dataValues.content,
+                        isYourMessage: true,
+                    };
+                    messageData = messageData.filter((messData) => {
+                        return messData.id !== receiverMessId;
+                    });
+                    messageData.unshift(data);
+                }
+            }
+            console.log("messdata", messageData);
+            res.status(200).json({ messageData }); //users
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            res.status(500).json({
+                message: "An error occurred while fetching users",
+                error: error.message,
+            });
+        }
+    },
+    searchUserByFullName: async (req, res) => {
+        try {
+            const fullName = req.params.slug;
+            const userConditions = {
+                role: "user", //k được
+            };
+
+            if (fullName) {
+                userConditions.full_name =
+                    (Sequelize.fn("unaccent", Sequelize.col("full_name")),
+                    {
+                        [Sequelize.Op.iLike]: `%${fullName}%`,
+                    });
+            }
+
+            const user = await User.findAndCountAll({
+                where: userConditions,
+            });
+
+            return res.status(200).json({
+                message: "Successfully fetched all posts",
+                data: user.rows,
+                count: user.count,
+            });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
         }
     },
 };

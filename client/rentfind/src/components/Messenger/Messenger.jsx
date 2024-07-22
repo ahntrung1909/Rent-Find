@@ -1,266 +1,241 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import {
+    MainContainer,
+    Sidebar,
+    ConversationList,
+    Conversation,
+    Avatar,
+    ChatContainer,
+    ConversationHeader,
+    MessageList,
+    Message,
+    MessageInput,
+    TypingIndicator,
+    Search,
+} from "@chatscope/chat-ui-kit-react";
+import "./messenger.scss";
+import { firebase } from "../../utils/fireBaseConfig";
+import { useRecoilState } from "recoil";
+import { userState } from "../../recoil/atom";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import * as ChatKit from "@chatscope/chat-ui-kit-react";
+const Messenger = () => {
+    const navigate = useNavigate();
+    const allUserRef = useRef([]);
+    const [allUsers, setAllUsers] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [user, setUser] = useRecoilState(userState);
+    const [receiver, setReceiver] = useState(null);
+    const [searchTerm, setSearchTerm] = useState(""); // Thêm trạng thái tìm kiếm
+    const fileInputRef = useRef(null); // Ref to reference the file input
 
-export default function Messenger() {
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:3000/api/user/get-all-users/${user.data.id}`
+            );
+            setAllUsers(response.data.messageData);
+            allUserRef.current = response.data.messageData;
+            setReceiver(response.data.messageData[0]);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+    useEffect(() => {
+        if (user && user.data) {
+            fetchUsers();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (allUsers && allUsers.length && user && receiver) {
+            let sender = user.data.id;
+            fetchData(sender, receiver.id);
+        }
+    }, [user, receiver]);
+
+    const fetchData = async (sender, receiver) => {
+        try {
+            const messageRef = firebase.firestore().collection("message");
+            //đây là query của firebase, search mấy cái câu lệnh để truy vấn
+
+            const query = messageRef
+                .where("sender", "in", [sender, receiver])
+                .where("receiver", "in", [sender, receiver])
+                .orderBy("sendAt", "asc");
+
+            query.onSnapshot((snapshot) => {
+                const messageList = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setMessages(messageList);
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleSendMessage = async (message) => {
+        const sender = user.data.id;
+        const newMessage = {
+            message,
+            sender,
+            receiver: receiver.id,
+            sendAt: firebase.firestore.FieldValue.serverTimestamp(),
+        };
+        try {
+            await firebase.firestore().collection("message").add(newMessage);
+            await axios.post(`http://localhost:3000/api/message/upload-msg/`, {
+                content: message,
+                senderId: sender,
+                receiverId: receiver.id,
+                seen: false,
+            });
+            fetchUsers();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleUserClick = (user) => {
+        setReceiver(user);
+    };
+
+    const handleSearch = (value) => {
+        setSearchTerm(value);
+        if (value === "") {
+            setAllUsers(allUserRef.current);
+        }
+        {
+            const searchResult = [];
+            if (allUsers) {
+                allUserRef.current.map((user) => {
+                    if (
+                        user.full_name
+                            .toLowerCase()
+                            .includes(value.toLowerCase())
+                    ) {
+                        searchResult.push(user);
+                    }
+                });
+            }
+            setAllUsers(searchResult);
+        }
+    };
+
+    const uploadFile = async (file) => {
+        const storageRef = firebase.storage().ref();
+        const fileRef = storageRef.child(`uploads/${file.name}`);
+        await fileRef.put(file);
+        const fileURL = await fileRef.getDownloadURL();
+        return fileURL;
+    };
+
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            try {
+                const fileURL = await uploadFile(file);
+                // Save the file URL to Firestore as a message
+                await handleSendMessage(`File uploaded: ${fileURL}`);
+            } catch (error) {
+                console.error("Error uploading file:", error);
+            }
+        }
+    };
+
+    const handleAttachClick = () => {
+        fileInputRef.current.click();
+    };
+
     return (
-        <ChatKit.MainContainer
+        <MainContainer
             responsive
             style={{
                 height: "600px",
                 margin: "0 131px 20px 131px",
             }}
         >
-            <ChatKit.Sidebar position="left">
-                <ChatKit.Search placeholder="Search..." />
-                <ChatKit.ConversationList>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Lilly"
-                        name="Lilly"
-                    >
-                        <ChatKit.Avatar
-                            name="Lilly"
-                            src="https://chatscope.io/storybook/react/assets/lilly-aj6lnGPk.svg"
-                            status="available"
-                        />
-                    </ChatKit.Conversation>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Joe"
-                        name="Joe"
-                    >
-                        <ChatKit.Avatar
-                            name="Joe"
-                            src="https://chatscope.io/storybook/react/assets/joe-v8Vy3KOS.svg"
-                            status="dnd"
-                        />
-                    </ChatKit.Conversation>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Emily"
-                        name="Emily"
-                        unreadCnt={3}
-                    >
-                        <ChatKit.Avatar
-                            name="Emily"
-                            src="https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg"
-                            status="available"
-                        />
-                    </ChatKit.Conversation>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Kai"
-                        name="Kai"
-                        unreadDot
-                    >
-                        <ChatKit.Avatar
-                            name="Kai"
-                            src="https://chatscope.io/storybook/react/assets/kai-5wHRJGb2.svg"
-                            status="unavailable"
-                        />
-                    </ChatKit.Conversation>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Akane"
-                        name="Akane"
-                    >
-                        <ChatKit.Avatar
-                            name="Akane"
-                            src="https://chatscope.io/storybook/react/assets/akane-MXhWvx63.svg"
-                            status="eager"
-                        />
-                    </ChatKit.Conversation>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Eliot"
-                        name="Eliot"
-                    >
-                        <ChatKit.Avatar
-                            name="Eliot"
-                            src="https://chatscope.io/storybook/react/assets/eliot-JNkqSAth.svg"
-                            status="away"
-                        />
-                    </ChatKit.Conversation>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Zoe"
+            <Sidebar position="left">
+                <Search
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(value) => handleSearch(value)}
+                    onClearClick={() => handleSearch("")} // Gọi hàm handleSearch với giá trị rỗng để xóa tìm kiếm
+                />
+                <ConversationList>
+                    {!!allUsers?.length
+                        ? allUsers.map((item) => (
+                              <Conversation
+                                  key={item.id}
+                                  name={item.full_name}
+                                  info={
+                                      item.lastMessage
+                                          ? item.lastMessage.trim()
+                                          : "Tin nhắn chờ"
+                                  }
+                                  lastSenderName={
+                                      item.isYourMessage
+                                          ? `Bạn`
+                                          : item.full_name
+                                  }
+                                  onClick={() => handleUserClick(item)}
+                              >
+                                  <img
+                                      style={{ width: 40, height: 40 }}
+                                      src="/user.jpg"
+                                      as="Avatar"
+                                      name={item.full_name}
+                                  />
+                              </Conversation>
+                          ))
+                        : "Không có kết quả"}
+                </ConversationList>
+            </Sidebar>
+            <ChatContainer>
+                <ConversationHeader>
+                    <ConversationHeader.Back />
+                    <img
+                        style={{ width: 40, height: 40 }}
+                        as="Avatar"
+                        src="/user.jpg"
                         name="Zoe"
-                    >
-                        <ChatKit.Avatar
-                            name="Zoe"
-                            src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-                            status="dnd"
-                        />
-                    </ChatKit.Conversation>
-                    <ChatKit.Conversation
-                        info="Yes i can do it for you"
-                        lastSenderName="Patrik"
-                        name="Patrik"
-                    >
-                        <ChatKit.Avatar
-                            name="Patrik"
-                            src="https://chatscope.io/storybook/react/assets/patrik-yC7svbAR.svg"
-                            status="invisible"
-                        />
-                    </ChatKit.Conversation>
-                </ChatKit.ConversationList>
-            </ChatKit.Sidebar>
-            <ChatKit.ChatContainer>
-                <ChatKit.ConversationHeader>
-                    <ChatKit.ConversationHeader.Back />
-                    <ChatKit.Avatar
-                        name="Zoe"
-                        src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
                     />
-                    <ChatKit.ConversationHeader.Content
-                        info="Active 10 mins ago"
-                        userName="Zoe"
+                    <ConversationHeader.Content
+                        userName={receiver ? receiver.full_name : "Unknown"}
+                        // userName={receiverId}
                     />
-                    <ChatKit.ConversationHeader.Actions>
-                        <ChatKit.VoiceCallButton />
-                        <ChatKit.VideoCallButton />
-                        <ChatKit.EllipsisButton orientation="vertical" />
-                    </ChatKit.ConversationHeader.Actions>
-                </ChatKit.ConversationHeader>
-                <ChatKit.MessageList
-                    typingIndicator={
-                        <ChatKit.TypingIndicator content="Zoe is typing" />
-                    }
-                >
-                    <ChatKit.MessageSeparator content="Saturday, 30 November 2019" />
-                    <ChatKit.Message
-                        model={{
-                            direction: "incoming",
-                            message: "Hello my friend",
-                            position: "single",
-                            sender: "Zoe",
-                            sentTime: "15 mins ago",
-                        }}
-                    >
-                        <ChatKit.Avatar
-                            name="Zoe"
-                            src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-                        />
-                    </ChatKit.Message>
-                    <ChatKit.Message
-                        avatarSpacer
-                        model={{
-                            direction: "outgoing",
-                            message: "Hello my friend",
-                            position: "single",
-                            sender: "Patrik",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        avatarSpacer
-                        model={{
-                            direction: "incoming",
-                            message: "Hello my friend",
-                            position: "first",
-                            sender: "Zoe",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        avatarSpacer
-                        model={{
-                            direction: "incoming",
-                            message: "Hello my friend",
-                            position: "normal",
-                            sender: "Zoe",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        avatarSpacer
-                        model={{
-                            direction: "incoming",
-                            message: "Hello my friend",
-                            position: "normal",
-                            sender: "Zoe",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        model={{
-                            direction: "incoming",
-                            message: "Hello my friend",
-                            position: "last",
-                            sender: "Zoe",
-                            sentTime: "15 mins ago",
-                        }}
-                    >
-                        <ChatKit.Avatar
-                            name="Zoe"
-                            src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-                        />
-                    </ChatKit.Message>
-                    <ChatKit.Message
-                        model={{
-                            direction: "outgoing",
-                            message: "Hello my friend",
-                            position: "first",
-                            sender: "Patrik",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        model={{
-                            direction: "outgoing",
-                            message: "Hello my friend",
-                            position: "normal",
-                            sender: "Patrik",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        model={{
-                            direction: "outgoing",
-                            message: "Hello my friend",
-                            position: "normal",
-                            sender: "Patrik",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        model={{
-                            direction: "outgoing",
-                            message: "Hello my friend",
-                            position: "last",
-                            sender: "Patrik",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        avatarSpacer
-                        model={{
-                            direction: "incoming",
-                            message: "Hello my friend",
-                            position: "first",
-                            sender: "Zoe",
-                            sentTime: "15 mins ago",
-                        }}
-                    />
-                    <ChatKit.Message
-                        model={{
-                            direction: "incoming",
-                            message: "Hello my friend",
-                            position: "last",
-                            sender: "Zoe",
-                            sentTime: "15 mins ago",
-                        }}
-                    >
-                        <ChatKit.Avatar
-                            name="Zoe"
-                            src="https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"
-                        />
-                    </ChatKit.Message>
-                </ChatKit.MessageList>
-                <ChatKit.MessageInput placeholder="Type message here" />
-            </ChatKit.ChatContainer>
-        </ChatKit.MainContainer>
+                </ConversationHeader>
+                <MessageList>
+                    {messages.map((msg, index) => {
+                        const modifiedMsg = { ...msg };
+                        if (user.data.id === msg.receiver) {
+                            modifiedMsg.direction = "incoming";
+                        } else {
+                            modifiedMsg.direction = "outgoing";
+                        }
+                        return (
+                            <Message key={index} model={modifiedMsg}></Message>
+                        );
+                    })}
+                </MessageList>
+                <MessageInput
+                    placeholder="Type message here"
+                    onSend={(m) => handleSendMessage(m)}
+                    onAttachClick={handleAttachClick}
+                />
+            </ChatContainer>
+            <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+            />
+        </MainContainer>
     );
-}
+};
+
+export default Messenger;

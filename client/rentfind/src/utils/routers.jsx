@@ -8,6 +8,7 @@ import Profile from "../pages/profile/Profile";
 import UploadPost from "../pages/uploadPost/UploadPost";
 import AuthGuard from "../components/AuthGuard";
 import AdminGuard from "../components/AdminGuard";
+import StatusGuard from "../components/StatusGuard";
 import PostDetails from "../pages/postDetails/PostDetails";
 import ResetPassword from "../pages/resetPassword/ResetPassword";
 import ChangePassword from "../pages/resetPassword/ChangePassword";
@@ -80,7 +81,9 @@ export const routers = createBrowserRouter([
                         path: "/upload-post",
                         element: (
                             <AuthGuard>
-                                <UploadPost />,
+                                <StatusGuard>
+                                    <UploadPost />,
+                                </StatusGuard>
                             </AuthGuard>
                         ),
                     },
@@ -122,7 +125,13 @@ export const routers = createBrowserRouter([
                     },
                     {
                         path: "/messenger",
-                        element: <Messenger />,
+                        element: (
+                            <AuthGuard>
+                                <StatusGuard>
+                                    <Messenger />,
+                                </StatusGuard>
+                            </AuthGuard>
+                        ),
                     },
                 ],
             },

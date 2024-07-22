@@ -107,10 +107,10 @@ function Card(props) {
                                 <p>Thích bài viết</p>
                             </div>
                         )} */}
-                        <div className="icon">
+                        {/* <div className="icon">
                             <img src="/chat.png" alt="" />
                             <p>Nhắn tin</p>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

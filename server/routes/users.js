@@ -13,5 +13,13 @@ router.post(
     authenticateJWT,
     userController.updateInfo
 );
-
+router.get(
+    `/get-all-users/:senderId`,
+    authenticateJWT,
+    userController.getAllUsers
+);
+router.get(
+    "/search-user-by-fullName/:slug",
+    userController.searchUserByFullName
+);
 module.exports = router;
