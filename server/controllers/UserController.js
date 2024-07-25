@@ -118,13 +118,13 @@ const UserController = {
                 include: [
                     {
                         model: User,
-                        as: "ReceiverUser", // Tên alias của quan hệ
-                        attributes: ["id", "full_name", "email"], // Các trường cần lấy của User
+                        as: "ReceiverUser",
+                        attributes: ["id", "full_name", "email"],
                     },
                     {
                         model: User,
-                        as: "SenderUser", // Tên alias của quan hệ
-                        attributes: ["id", "full_name", "email"], // Các trường cần lấy của User
+                        as: "SenderUser",
+                        attributes: ["id", "full_name", "email"],
                     },
                 ],
                 order: [

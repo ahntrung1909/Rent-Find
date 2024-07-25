@@ -104,7 +104,7 @@ export default function AllUsers() {
 
     return (
         <>
-            <div className="container">
+            <div className="container2">
                 <h3
                     style={{
                         textAlign: "center",

@@ -167,32 +167,37 @@ const Messenger = () => {
                     onClearClick={() => handleSearch("")} // Gọi hàm handleSearch với giá trị rỗng để xóa tìm kiếm
                 />
                 <ConversationList>
-                    {!!allUsers?.length
-                        ? allUsers.map((item) => (
-                              <Conversation
-                                  key={item.id}
-                                  name={item.full_name}
-                                  info={
-                                      item.lastMessage
-                                          ? item.lastMessage.trim()
-                                          : "Tin nhắn chờ"
-                                  }
-                                  lastSenderName={
-                                      item.isYourMessage
-                                          ? `Bạn`
-                                          : item.full_name
-                                  }
-                                  onClick={() => handleUserClick(item)}
-                              >
-                                  <img
-                                      style={{ width: 40, height: 40 }}
-                                      src="/user.jpg"
-                                      as="Avatar"
-                                      name={item.full_name}
-                                  />
-                              </Conversation>
-                          ))
-                        : "Không có kết quả"}
+                    {!!allUsers?.length ? (
+                        allUsers.map((item) => (
+                            <Conversation
+                                key={item.id}
+                                name={item.full_name}
+                                info={
+                                    item.lastMessage
+                                        ? item.lastMessage.trim()
+                                        : "Tin nhắn chờ"
+                                }
+                                lastSenderName={
+                                    item.isYourMessage ? `Bạn` : item.full_name
+                                }
+                                onClick={() => handleUserClick(item)}
+                            >
+                                <img
+                                    style={{ width: 40, height: 40 }}
+                                    src="/user.jpg"
+                                    as="Avatar"
+                                    name={item.full_name}
+                                />
+                            </Conversation>
+                        ))
+                    ) : (
+                        <div
+                            style={{ textAlign: "center", marginTop: 10 }}
+                            as="Conversation2"
+                        >
+                            <p>Không có kết quả</p>
+                        </div>
+                    )}
                 </ConversationList>
             </Sidebar>
             <ChatContainer>

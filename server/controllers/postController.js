@@ -257,12 +257,30 @@ const PostController = {
             const { offset } = paginate(page, limit);
 
             // Điều kiện tìm kiếm cho bảng Posts
+            // if (title) {
+            //     postConditions.title =
+            //         (Sequelize.fn("unaccent", Sequelize.col("title")),
+            //         {
+            //             [Sequelize.Op.iLike]: `%${title}%`,
+            //         });
+            // }
             if (title) {
-                postConditions.title =
-                    (Sequelize.fn("unaccent", Sequelize.col("title")),
+                postConditions[Sequelize.Op.or] = [
                     {
-                        [Sequelize.Op.iLike]: `%${title}%`,
-                    });
+                        title:
+                            (Sequelize.fn("unaccent", Sequelize.col("title")),
+                            {
+                                [Sequelize.Op.iLike]: `%${title}%`,
+                            }),
+                    },
+                    {
+                        description:
+                            (Sequelize.fn("unaccent", Sequelize.col("title")),
+                            {
+                                [Sequelize.Op.iLike]: `%${title}%`,
+                            }),
+                    },
+                ];
             }
 
             if (price) {
