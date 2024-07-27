@@ -168,7 +168,7 @@ export default function Policy() {
                     tả, Địa chỉ, Giá tiền,... <br></br>- Trong Mô tả, người dùng
                     phải mô tả rõ về thực trạng, chi tiết cũng như yêu cầu của
                     nơi thuê - cho thuê <br></br>- Người dùng phải đăng ít nhất
-                    3 ảnh chi tiết nơi nhà trọ <br></br>→ Khi đáp ứng những yêu
+                    2 ảnh chi tiết nơi nhà trọ <br></br>→ Khi đáp ứng những yêu
                     cầu trên, người kiểm duyệt sẽ duyệt bài cho người dùng.
                 </p>
                 <h2
@@ -221,8 +221,11 @@ export default function Policy() {
                     sản***
                 </h2>
                 <p>
-                    Nếu bị phát hiện hoặc bị tố cáo, người dùng đó sẽ bị cấm
-                    vĩnh viễn khỏi Rent Find!
+                    - Nếu bị phát hiện hoặc bị tố cáo, người dùng đó sẽ bị cấm
+                    vĩnh viễn khỏi Rent Find! <br />- Tất cả số điện thoại đã
+                    được người kiểm duyệt, có thể an toàn gọi điện <br></br>-
+                    Tất cả những hành vi nằm ngoài phạm vi của RentFind, người
+                    dùng sẽ phải tự chịu toàn bộ trách nhiệm!
                 </p>
                 <p>
                     Website ra đời sẽ góp phần giải quyết được các vấn đề thuê

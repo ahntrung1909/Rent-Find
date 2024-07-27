@@ -90,24 +90,6 @@ const UserController = {
         const senderId = req.params.senderId;
         const currentUserId = req.user.dataValues.id;
         try {
-            // const users = await User.findAll({
-            //     where: {
-            //         id: {
-            //             [Op.ne]: senderId.toString(), // Loại trừ user có id là senderId
-            //         },
-            //         role: "user",
-            //     },
-            //     include: [
-            //         {
-            //             model: Messages,
-            //             as: "ReceiverMessages",
-            //         },
-            //         {
-            //             model: Messages,
-            //             as: "SenderMessages",
-            //         },
-            //     ],
-            // });
             const messages = await Messages.findAll({
                 where: {
                     [Op.or]: [

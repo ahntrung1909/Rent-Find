@@ -6,6 +6,7 @@ const Addresses = model.Addresses;
 const Messages = model.Messages;
 
 const MessageController = {
+    //thiếu 1 case khi bấm vào thg đã có tin nhắn rỗng nhưng khi bấm vào ntin trong details thì messenger kh hiện thằng đó => sắp xếp lại db
     uploadMessage: async (req, res) => {
         const newId = v4();
         const { content, senderId, receiverId, seen } = req.body;

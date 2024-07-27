@@ -28,7 +28,7 @@ export default function PostDetails() {
                                 content: "",
                                 senderId: sender,
                                 receiverId: receiver,
-                                seen: true,
+                                seen: true, //firstTime
                             }
                         );
                     } catch (error) {

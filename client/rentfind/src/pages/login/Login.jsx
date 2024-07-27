@@ -11,6 +11,7 @@ import {
 import { regex } from "../../utils/regex";
 import axios from "axios";
 import setAuthToken from "../../utils/setAuthToken";
+import { jwtDecode } from "jwt-decode";
 
 const iconStyles = {
     marginInlineStart: "16px",
@@ -53,12 +54,22 @@ export default function Login() {
                                     accessToken
                                 );
                                 setAuthToken(accessToken);
+                                const { role } = jwtDecode(accessToken);
+                                console.log(role);
+                                console.log(success);
                                 if (success) {
                                     message.success("Đăng nhập thành công!");
-                                    setTimeout(() => {
-                                        window.location.href =
-                                            "http://localhost:5173/";
-                                    }, 1000);
+                                    if (role === "admin") {
+                                        setTimeout(() => {
+                                            window.location.href =
+                                                "http://localhost:5173/admin";
+                                        }, 1000);
+                                    } else {
+                                        setTimeout(() => {
+                                            window.location.href =
+                                                "http://localhost:5173/";
+                                        }, 1000);
+                                    }
                                 }
                             }
                         })

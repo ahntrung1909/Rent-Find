@@ -191,7 +191,7 @@ export default function UploadPost() {
 
                 <ProFormUploadButton
                     name="images"
-                    label="Tải ảnh lên"
+                    label="Tải ảnh lên (Nếu là Cho thuê, ít nhất 2 ảnh)"
                     title="Chọn để tải lên"
                     max={4}
                     fieldProps={{

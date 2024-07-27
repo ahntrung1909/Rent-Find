@@ -1,6 +1,8 @@
 // Import the functions you need from the SDKs you need
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
+import "firebase/compat/storage";
+
 const firebaseConfig = {
     apiKey: "AIzaSyDb-K2zSMmt5FuCQdCf7DA3sc0dhOLrkUo",
     authDomain: "rentfind-1bc87.firebaseapp.com",

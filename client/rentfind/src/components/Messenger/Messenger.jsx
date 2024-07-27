@@ -14,12 +14,15 @@ import {
     TypingIndicator,
     Search,
 } from "@chatscope/chat-ui-kit-react";
+import { CloseOutlined, RightOutlined, LeftOutlined } from "@ant-design/icons";
 import "./messenger.scss";
 import { firebase } from "../../utils/fireBaseConfig";
 import { useRecoilState } from "recoil";
 import { userState } from "../../recoil/atom";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 const Messenger = () => {
     const navigate = useNavigate();
@@ -29,6 +32,8 @@ const Messenger = () => {
     const [user, setUser] = useRecoilState(userState);
     const [receiver, setReceiver] = useState(null);
     const [searchTerm, setSearchTerm] = useState(""); // Thêm trạng thái tìm kiếm
+    const [linkImgZoom, setLinkImgZoom] = useState(null);
+    const listImg = useRef([]);
     const fileInputRef = useRef(null); // Ref to reference the file input
 
     const fetchUsers = async () => {
@@ -140,7 +145,7 @@ const Messenger = () => {
             try {
                 const fileURL = await uploadFile(file);
                 // Save the file URL to Firestore as a message
-                await handleSendMessage(`File uploaded: ${fileURL}`);
+                await handleSendMessage(`${fileURL}`);
             } catch (error) {
                 console.error("Error uploading file:", error);
             }
@@ -159,6 +164,41 @@ const Messenger = () => {
                 margin: "0 131px 20px 131px",
             }}
         >
+            {listImg && linkImgZoom !== null && (
+                <>
+                    <div className="overlay-zoom-container"></div>
+                    <CloseOutlined
+                        className="close-btn"
+                        onClick={() => {
+                            setLinkImgZoom(null);
+                        }}
+                    />
+                    <LeftOutlined
+                        className="prev-btn"
+                        onClick={() => {
+                            if (linkImgZoom > 0)
+                                setLinkImgZoom(linkImgZoom - 1);
+                            if (linkImgZoom <= 0)
+                                setLinkImgZoom(listImg.current.length - 1);
+                        }}
+                    />
+                    <RightOutlined
+                        className="next-btn"
+                        onClick={() => {
+                            if (linkImgZoom < listImg.current.length - 1)
+                                setLinkImgZoom(linkImgZoom + 1);
+                            if (linkImgZoom >= listImg.current.length - 1) {
+                                setLinkImgZoom(0);
+                            }
+                        }}
+                    />
+                    <img
+                        src={listImg.current[linkImgZoom].href}
+                        alt=""
+                        className="img-zoom-item"
+                    />
+                </>
+            )}
             <Sidebar position="left">
                 <Search
                     placeholder="Search..."
@@ -216,14 +256,70 @@ const Messenger = () => {
                 </ConversationHeader>
                 <MessageList>
                     {messages.map((msg, index) => {
+                        const regexImg =
+                            /https?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+\.(?:jpg|jpeg|png|gif|bmp|webp)/;
+
                         const modifiedMsg = { ...msg };
                         if (user.data.id === msg.receiver) {
                             modifiedMsg.direction = "incoming";
                         } else {
                             modifiedMsg.direction = "outgoing";
                         }
+                        const href = regexImg.test(modifiedMsg.message)
+                            ? modifiedMsg.message
+                            : null;
+                        if (href) {
+                            if (
+                                !listImg.current.find(
+                                    (img) => img.id === modifiedMsg.id
+                                )
+                            ) {
+                                listImg.current.push({
+                                    id: modifiedMsg.id,
+                                    href: href,
+                                });
+                            }
+                        }
+                        // console.log(modifiedMsg.message);
+
                         return (
-                            <Message key={index} model={modifiedMsg}></Message>
+                            <div>
+                                <Message
+                                    key={index}
+                                    model={{
+                                        direction: modifiedMsg.direction,
+                                    }}
+                                    style={href && { cursor: "pointer" }}
+                                    onClick={() => {
+                                        if (href) {
+                                            const curIndex =
+                                                listImg.current.findIndex(
+                                                    (img) =>
+                                                        img.id ===
+                                                        modifiedMsg.id
+                                                ); //kiểm tra id để lấy ra index
+                                            setLinkImgZoom(curIndex);
+                                            // console.log(listImg.current);
+                                            // console.log(
+                                            //     "curIndex=" +
+                                            //         listImg.current[curIndex]
+                                            //             .href
+                                            // );
+                                        }
+                                    }}
+                                >
+                                    {href ? (
+                                        <Message.ImageContent
+                                            src={href}
+                                            width={300}
+                                        />
+                                    ) : (
+                                        <Message.TextContent
+                                            text={modifiedMsg.message}
+                                        />
+                                    )}
+                                </Message>
+                            </div>
                         );
                     })}
                 </MessageList>

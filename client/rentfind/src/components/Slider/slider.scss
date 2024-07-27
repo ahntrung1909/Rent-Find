@@ -1,12 +1,12 @@
-@import '../../responsive.scss';
+@import "../../responsive.scss";
 
-.slider{
+.slider {
     width: 100%;
     height: 350px;
     display: flex;
     gap: 20px;
-    
-    img{
+
+    img {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -14,8 +14,8 @@
         cursor: pointer;
     }
 
-    .full-slider{
-        position: absolute;
+    .full-slider {
+        position: fixed;
         width: 100vw;
         height: 100vh;
         top: 0;
@@ -26,41 +26,40 @@
         align-items: center;
         z-index: 999;
 
-        .arrow{
+        .arrow {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
 
-            img{
+            img {
                 width: 50px;
-                
-                @include medium{
+
+                @include medium {
                     width: 30px;
                 }
 
-                @include small{
+                @include small {
                     width: 20px;
                 }
 
-                &.right{
+                &.right {
                     transform: rotate(180deg);
                 }
             }
-
         }
 
-        .full-image{
+        .full-image {
             flex: 10;
 
-            img{
+            img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
             }
         }
 
-        .close{
+        .close {
             position: absolute;
             top: 0;
             right: 0;
@@ -70,25 +69,24 @@
             padding: 50px;
             cursor: pointer;
 
-            @include small{
+            @include small {
                 width: 20px;
             }
         }
     }
 
-    .big-image{
+    .big-image {
         flex: 3;
-
     }
 
-    .small-images{
+    .small-images {
         flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         gap: 20px;
 
-        img{
+        img {
             height: 100px;
         }
     }
