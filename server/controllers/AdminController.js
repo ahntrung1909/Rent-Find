@@ -213,6 +213,7 @@ const AdminController = {
             const count = await Report.count({
                 where: {
                     accused: accusedId,
+                    result: true,
                 },
             });
 

@@ -13,6 +13,8 @@ router.get("/get-my-posts/:id", PostController.getMyPosts);
 router.get("/get-my-hidden-posts/:id", PostController.getMyHidPosts);
 router.get("/get-my-liked-posts/:id", PostController.getMyLikedPosts);
 router.post("/search", PostController.search);
+router.post("/lease-search", PostController.leaseSearch);
+router.post("/rent-search", PostController.rentSearch);
 router.post("/like-post", PostController.likePost);
 router.post("/unlike-post", PostController.unlikePost);
 router.post("/check-like", PostController.checkLike);

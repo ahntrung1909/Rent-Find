@@ -222,9 +222,10 @@ export default function Policy() {
                 </h2>
                 <p>
                     - Nếu bị phát hiện hoặc bị tố cáo, người dùng đó sẽ bị cấm
-                    vĩnh viễn khỏi Rent Find! <br />- Tất cả số điện thoại đã
-                    được người kiểm duyệt, có thể an toàn gọi điện <br></br>-
-                    Tất cả những hành vi nằm ngoài phạm vi của RentFind, người
+                    vĩnh viễn khỏi Rent Find! <br />
+                    {/* - Tất cả số điện thoại đã
+                    được người kiểm duyệt, có thể an toàn gọi điện <br></br> */}
+                    - Tất cả những hành vi nằm ngoài phạm vi của RentFind, người
                     dùng sẽ phải tự chịu toàn bộ trách nhiệm!
                 </p>
                 <p>

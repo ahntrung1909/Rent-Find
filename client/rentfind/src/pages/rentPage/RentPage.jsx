@@ -17,6 +17,7 @@ function RentPage() {
     const [wards, setWards] = useState([]);
     const [selectedCity, setSelectedCity] = useState(null);
     const [selectedDistrict, setSelectedDistrict] = useState(null);
+    const [currentSearchValues, setCurrentSearchValues] = useState({});
 
     const fetchProvinces = async () => {
         const response = await fetch(
@@ -72,15 +73,14 @@ function RentPage() {
         }
     };
 
-    const fetchData = async (page = 1, limit = 5) => {
+    const fetchData = async (page = 1, limit = 5, searchValues = {}) => {
         try {
-            const response = await axios.get(
-                "http://localhost:3000/api/post/get-rent-posts",
+            const response = await axios.post(
+                "http://localhost:3000/api/post/rent-search",
                 {
-                    params: {
-                        page,
-                        limit,
-                    },
+                    ...searchValues,
+                    page,
+                    limit,
                 }
             );
 
@@ -101,6 +101,7 @@ function RentPage() {
                         throw error;
                     }
                 }
+
                 const addressResponse = await axios.get(
                     `http://localhost:3000/api/addresses/address-information/${rentPagePosts.post_address_id}`
                 );
@@ -128,7 +129,7 @@ function RentPage() {
             });
 
             const detailedPosts = await Promise.all(detailedPostsPromises);
-            console.log(detailedPosts);
+            // console.log(detailedPosts);
             setRentPagePosts({
                 posts: detailedPosts,
                 totalPosts,
@@ -141,11 +142,15 @@ function RentPage() {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchData(1, 5);
     }, []);
-
+    // console.log(homePagePosts);
     const handlePageChange = (page, pageSize) => {
-        fetchData(page, pageSize);
+        window.scrollTo({
+            top: 0,
+            behavior: "auto", // Tùy chọn để cuộn mượt mà
+        });
+        fetchData(page, pageSize, currentSearchValues);
     };
 
     return (
@@ -188,8 +193,9 @@ function RentPage() {
                         }}
                         onFinish={async (values) => {
                             console.log(values);
+                            setCurrentSearchValues(values);
                             const response = await axios.post(
-                                `http://localhost:3000/api/post/search`,
+                                `http://localhost:3000/api/post/rent-search`,
                                 { ...values, page: 1, limit: 5 }
                             );
                             const {

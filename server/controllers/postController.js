@@ -252,7 +252,259 @@ const PostController = {
         try {
             const { title, price, city, district, ward, page, limit } =
                 req.body;
-            const postConditions = {};
+            const postConditions = { status: "true" };
+            // Tính toán offset cho phân trang
+            const { offset } = paginate(page, limit);
+
+            // Điều kiện tìm kiếm cho bảng Posts
+            // if (title) {
+            //     postConditions.title =
+            //         (Sequelize.fn("unaccent", Sequelize.col("title")),
+            //         {
+            //             [Sequelize.Op.iLike]: `%${title}%`,
+            //         });
+            // }
+            if (title) {
+                postConditions[Sequelize.Op.or] = [
+                    {
+                        title:
+                            (Sequelize.fn("unaccent", Sequelize.col("title")),
+                            {
+                                [Sequelize.Op.iLike]: `%${title}%`,
+                            }),
+                    },
+                    {
+                        description:
+                            (Sequelize.fn("unaccent", Sequelize.col("title")),
+                            {
+                                [Sequelize.Op.iLike]: `%${title}%`,
+                            }),
+                    },
+                ];
+            }
+
+            if (price) {
+                switch (price) {
+                    case "under_1_million":
+                        postConditions.price = { [Op.lt]: 1000000 };
+                        break;
+                    case "1_to_2_million":
+                        postConditions.price = {
+                            [Op.between]: [1000000, 2000000],
+                        };
+                        break;
+                    case "2_to_3_million":
+                        postConditions.price = {
+                            [Op.between]: [2000000, 3000000],
+                        };
+                        break;
+                    case "3_to_4_million":
+                        postConditions.price = {
+                            [Op.between]: [3000000, 4000000],
+                        };
+                        break;
+                    case "4_to_5_million":
+                        postConditions.price = {
+                            [Op.between]: [4000000, 5000000],
+                        };
+                        break;
+                    case "5_to_7_million":
+                        postConditions.price = {
+                            [Op.between]: [5000000, 7000000],
+                        };
+                        break;
+                    case "7_to_10_million":
+                        postConditions.price = {
+                            [Op.between]: [7000000, 10000000],
+                        };
+                        break;
+                }
+            }
+
+            // Điều kiện tìm kiếm cho bảng Addresses
+            const addressConditions = {};
+            if (city) {
+                addressConditions.city = city;
+            }
+            if (district) {
+                addressConditions.district = district;
+            }
+            if (ward) {
+                addressConditions.ward = ward;
+            }
+
+            // Thực hiện truy vấn với các điều kiện
+            // SELECT * FROM posts
+            // JOIN addresses ON posts.post_address_id = addresses.id
+            // WHERE (posts.description = 'Cho thuê nhà trọ 3')
+            //   AND (posts.price BETWEEN 4000000 AND 6000000)
+            //   AND (addresses.city = 'Thành phố Hồ Chí Minh')
+            //   AND (addresses.district = 'Quận 1')
+            //   AND (addresses.ward = 'Phường Nguyễn Thái Bình');
+            const { rows: searchPosts, count: totalPosts } =
+                await Posts.findAndCountAll({
+                    where: postConditions,
+                    include: [
+                        {
+                            model: Addresses,
+                            where: addressConditions,
+                        },
+                        {
+                            model: User,
+                            attributes: ["id", "full_name", "phone_number"],
+                        },
+                        {
+                            model: ImgPost,
+                            attributes: ["id", "img_url"],
+                        },
+                    ],
+                    limit,
+                    offset,
+                });
+
+            // Tính toán tổng số trang
+            const totalPages = Math.ceil(totalPosts / limit);
+
+            console.log("searchPosts: " + searchPosts);
+
+            res.status(200).json({
+                posts: searchPosts,
+                totalPosts,
+                totalPages,
+                currentPage: page,
+            });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    leaseSearch: async (req, res) => {
+        try {
+            const { title, price, city, district, ward, page, limit } =
+                req.body;
+            const postConditions = { status: "true", type: "lease" };
+            // Tính toán offset cho phân trang
+            const { offset } = paginate(page, limit);
+
+            // Điều kiện tìm kiếm cho bảng Posts
+            // if (title) {
+            //     postConditions.title =
+            //         (Sequelize.fn("unaccent", Sequelize.col("title")),
+            //         {
+            //             [Sequelize.Op.iLike]: `%${title}%`,
+            //         });
+            // }
+            if (title) {
+                postConditions[Sequelize.Op.or] = [
+                    {
+                        title:
+                            (Sequelize.fn("unaccent", Sequelize.col("title")),
+                            {
+                                [Sequelize.Op.iLike]: `%${title}%`,
+                            }),
+                    },
+                    {
+                        description:
+                            (Sequelize.fn("unaccent", Sequelize.col("title")),
+                            {
+                                [Sequelize.Op.iLike]: `%${title}%`,
+                            }),
+                    },
+                ];
+            }
+
+            if (price) {
+                switch (price) {
+                    case "under_1_million":
+                        postConditions.price = { [Op.lt]: 1000000 };
+                        break;
+                    case "1_to_2_million":
+                        postConditions.price = {
+                            [Op.between]: [1000000, 2000000],
+                        };
+                        break;
+                    case "2_to_3_million":
+                        postConditions.price = {
+                            [Op.between]: [2000000, 3000000],
+                        };
+                        break;
+                    case "3_to_4_million":
+                        postConditions.price = {
+                            [Op.between]: [3000000, 4000000],
+                        };
+                        break;
+                    case "4_to_5_million":
+                        postConditions.price = {
+                            [Op.between]: [4000000, 5000000],
+                        };
+                        break;
+                    case "5_to_7_million":
+                        postConditions.price = {
+                            [Op.between]: [5000000, 7000000],
+                        };
+                        break;
+                    case "7_to_10_million":
+                        postConditions.price = {
+                            [Op.between]: [7000000, 10000000],
+                        };
+                        break;
+                }
+            }
+
+            // Điều kiện tìm kiếm cho bảng Addresses
+            const addressConditions = {};
+            if (city) {
+                addressConditions.city = city;
+            }
+            if (district) {
+                addressConditions.district = district;
+            }
+            if (ward) {
+                addressConditions.ward = ward;
+            }
+
+            console.log("abc", postConditions);
+
+            const { rows: searchPosts, count: totalPosts } =
+                await Posts.findAndCountAll({
+                    where: postConditions,
+                    include: [
+                        {
+                            model: Addresses,
+                            where: addressConditions,
+                        },
+                        {
+                            model: User,
+                            attributes: ["id", "full_name", "phone_number"],
+                        },
+                        {
+                            model: ImgPost,
+                            attributes: ["id", "img_url"],
+                        },
+                    ],
+                    limit,
+                    offset,
+                });
+
+            // Tính toán tổng số trang
+            const totalPages = Math.ceil(totalPosts / limit);
+
+            // console.log("searchPosts: " + searchPosts);
+
+            res.status(200).json({
+                posts: searchPosts,
+                totalPosts,
+                totalPages,
+                currentPage: page,
+            });
+        } catch (error) {
+            res.status(500).json({ errors: error.message });
+        }
+    },
+    rentSearch: async (req, res) => {
+        try {
+            const { title, price, city, district, ward, page, limit } =
+                req.body;
+            const postConditions = { status: "true", type: "rent" };
             // Tính toán offset cho phân trang
             const { offset } = paginate(page, limit);
 
